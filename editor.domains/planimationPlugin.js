@@ -340,6 +340,24 @@ define(function () {
             snippet += '   )\n';
             snippet += ' )\n';
             window.add_snippet(snippet, "animation");
+
+            // The default pddl for visual object
+            var snippet = '';
+            snippet += '   ; Default Visual Object applied to all objects (default object)\n';
+            snippet += '   (:visual DefaultVisualObjectName\n';
+            snippet += '               :type default\n';
+            snippet += '               :properties(\n';
+            snippet += '                 (prefabImage img1)\n';
+            snippet += '                 (showName TRUE)\n';
+            snippet += '                 (x Null)\n';
+            snippet += '                 (y Null)\n';
+            snippet += '                 (color RANDOMCOLOR)\n';
+            snippet += '                 (width 80)\n';
+            snippet += '                 (height 80)\n';
+            snippet += '               )\n';
+            snippet += '   )\n';
+            snippet += '  \n';
+            window.add_snippet(snippet, "visual");
             
             // add menu item on the top menu
             window.add_menu_button('Planimation', 'planimationMenuItem', 'glyphicon-film', "choosePlanimationFiles('planimation')");
