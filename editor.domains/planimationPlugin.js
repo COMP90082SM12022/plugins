@@ -358,6 +358,14 @@ define(function () {
             snippet += '   )\n';
             snippet += '  \n';
             window.add_snippet(snippet, "visual");
+		
+	    var snippet = '';
+            snippet += '   ; Image file applied to all objects (default object)\n';
+            snippet += '   (image \n';
+            snippet += '         (imgName imgPath)\n';
+            snippet += '   )\n';
+            snippet += '  \n';
+            window.add_snippet(snippet, "image");
             
             // add menu item on the top menu
             window.add_menu_button('Planimation', 'planimationMenuItem', 'glyphicon-film', "choosePlanimationFiles('planimation')");
