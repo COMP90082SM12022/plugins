@@ -71,9 +71,10 @@ function doPddlInsertPredicate(predicate, custom, parameters, effect, skipModalT
     if (typeof custom === "undefined")
         custom = $('#customName').val();
     if (typeof effect === "undefined")
-        effect = $('#parametersName').val();
+        effect = $('#effectName').val();
     if (typeof parameters === "undefined")
-        parameters = $('#effectName').val();
+        parameters = $('#parametersName').val();
+
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
 
@@ -86,536 +87,713 @@ function doPddlInsertPredicate(predicate, custom, parameters, effect, skipModalT
     pddl += '    )\n'
     pddl += ')\n'
 
-    // eval(predicateName);
-
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
-        window.pddlInsertSettings.predicate.predicatename = $('#jsSetting').val();
+        // window.pddlInsertSettings.predicate.predicatename = $('#jsSetting').val();
         $('#pddlInsertModal').modal('toggle');
     }
 
 }
-/********************************************************************/
 
-function pddlInsertCustom() {
-    $('#pddlInsertModalLabel').text('Insert Customly Generated PDDL');
 
+function pddlInsertVisual(){
+    $('#pddlInsertModalLabel').text('Insert Visual');
     var html = '';
 
     html += '<form class="form-horizontal">';
 
     html += '<div class="form-group">';
-    html += '  <div class="col-sm-offset-2 col-sm-4"><pre>var pddl = \'\';</pre></div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="jsSetting" class="col-sm-2 control-label">Raw JavaScript</label>';
-    html += '  <div class="input-group col-sm-8">';
-    html += '    <textarea id="jsSetting" class="form-control" rows="13" placeholder="JavaScript will be \'eval\'d, and the variable pddl inserted."></textarea>';
+    html += '  <label for="VisualObjectName" class="col-sm-2 control-label">Visual Object Name</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="VisualObjectName" value="">';
     html += '  </div>';
     html += '</div>';
 
-    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertCustom(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+    html += '<div class="form-group">';
+    html += '  <label for="typeName" class="col-sm-2 control-label">Type Name</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="typeName" value="">';
+    html += '  </div>';
+    html += '</div>';
 
+    html += '<div class="form-group">';
+    html += '  <label for="prefabImageName" class="col-sm-2 control-label">prefabImage Name</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="prefabImageName" value="">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="showNameVaule" class="col-sm-2 control-label">showName (boolean)</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="showNameVaule" value="TRUE">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="xValue" class="col-sm-2 control-label">x</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="xValue" value="0">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="yValue" class="col-sm-2 control-label">y</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="yValue" value="0">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="colorName" class="col-sm-2 control-label">color</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="colorName" value="RANDOMCOLOR">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="widthValue" class="col-sm-2 control-label">width</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="widthValue" value="80">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="heightValue" class="col-sm-2 control-label">height</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="heightValue" value="80">';
+    html += '  </div>';
+    html += '</div>';
+
+
+    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertVisual(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
+
 
     $('#pddlInsertModalContent').html(html);
 
-    $('#jsSetting').val(window.pddlInsertSettings.custom.js);
-
     $('#pddlInsertModal').modal('toggle');
-
 }
 
-function doPddlInsertCustom(rawjs, skipModalToggle) {
+function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,width,height,skipModalToggle){
+    if (typeof visualObject === "undefined")
+        visualObject= $('#VisualObjectName').val();
+    if (typeof type === "undefined")
+        type = $('#typeName').val();
+    if (typeof prefabImage === "undefined")
+        prefabImage = $('#prefabImageName').val();
+    if (typeof showName === "undefined")
+        showName = $('#showNameVaule').val();
+    if (typeof x === "undefined")
+        x = $('#xValue').val();
+    if (typeof y === "undefined")
+        y = $('#yValue').val();
+    if (typeof color === "undefined")
+        color = $('#colorName').val();
+    if (typeof width === "undefined")
+        width = $('#widthValue').val();
+    if (typeof height === "undefined")
+        height = $('#heightValue').val();
+    if (typeof skipModalToggle === "undefined")
+        skipModalToggle = false;
 
-    if (typeof rawjs === "undefined")
-        rawjs = $('#jsSetting').val();
+ 
+
+    var pddl = '';
+    pddl += '   (:visual '+visualObject+'\n';
+    pddl += '       :type '+type+'\n';
+    pddl += '       :properties(\n';
+    pddl += '           (prefabImage '+prefabImage+')\n';
+    pddl += '           (showName '+showName+')\n';
+    pddl += '           (x '+x+')\n';
+    pddl += '           (y '+y+')\n';
+    pddl += '           (color '+color+')\n';
+    pddl += '           (width '+width+')\n';
+    pddl += '           (height '+height+')\n';
+    pddl += '       )\n';
+    pddl += '   )\n';
+    pddl += '\n';
+
+    window.get_current_editor().insert(pddl);
+    if (!skipModalToggle) {
+        $('#pddlInsertModal').modal('toggle');
+    }
+}
+
+function pddlInsertImage(){
+    $('#pddlInsertModalLabel').text('Insert Image');
+    var html = '';
+
+    html += '<form class="form-horizontal">';
+
+    html += '<div class="form-group">';
+    html += '  <label for="imageName" class="col-sm-2 control-label">Image Name</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="imageName" value="">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="imageEncoding" class="col-sm-2 control-label">Encoded Image</label>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="imageEncoding" value="">';
+    html += '  </div>';
+    html += '</div>';
+
+
+
+    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertImage(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+    html += '</form>';
+
+
+    $('#pddlInsertModalContent').html(html);
+
+    $('#pddlInsertModal').modal('toggle');
+}
+
+function doPddlInsertImage(imageName, imageEncoding, skipModalToggle){
+
+    if (typeof imageName === "undefined")
+        imageName= $('#imageName').val();
+    if (typeof imageEncoding === "undefined")
+        imageEncoding = $('#imageEncoding').val();
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
 
     var pddl = '';
-    eval(rawjs);
-
-    window.get_current_editor().insert(pddl);
-    if (!skipModalToggle) {
-        window.pddlInsertSettings.custom.js = $('#jsSetting').val();
-        $('#pddlInsertModal').modal('toggle');
-    }
-
-}
-
-/********************************************************************/
-
-function pddlInsertNetwork() {
-    $('#pddlInsertModalLabel').text('Insert Network');
-
-    var html = '';
-
-    html += '<form class="form-horizontal">';
-
-    html += '<div class="form-group">';
-    html += '  <div class="col-sm-offset-2 col-sm-10">';
-    html += '    <div class="checkbox">';
-    html += '      <label><input id="networkTypeSetting" type="checkbox"> Directed</label>';
-    html += '    </div>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="locPreSetting" class="col-sm-2 control-label">Location format</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="locPreSetting" value="loc">';
-    html += '    <div class="input-group-addon">#</div>';
-    html += '    <input type="text" class="form-control" id="locPostSetting" value="">';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="networkConnectionSetting" class="col-sm-2 control-label">Connection Predicate</label>';
-    html += '  <div class="input-group col-sm-3">';
-    html += '    <div class="input-group-addon">(</div>';
-    html += '    <input type="text" class="form-control" id="networkConnectionSetting" value="link">';
-    html += '    <div class="input-group-addon"> l1 l2)</div>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="adjacencySetting" class="col-sm-2 control-label">Adjacency List</label>';
-    html += '  <div class="input-group col-sm-8">';
-    html += '    <textarea id="adjacencySetting" class="form-control" rows="13" placeholder="Space separated location ids. Each line is a chain."></textarea>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertNetwork(); return false;" class="btn btn-primary btn-lg">Insert</button>';
-
-    html += '</form>';
-
-    $('#pddlInsertModalContent').html(html);
-
-    $('#adjacencySetting').val(window.pddlInsertSettings.network.adj);
-    $('#networkConnectionSetting').val(window.pddlInsertSettings.network.conn);
-    $('#locPreSetting').val(window.pddlInsertSettings.network.lpre);
-    $('#locPostSetting').val(window.pddlInsertSettings.network.lpos);
-    $('#networkTypeSetting').prop('checked', window.pddlInsertSettings.network.directed);
-
-    $('#pddlInsertModal').modal('toggle');
-
-}
-
-function doPddlInsertNetwork(directed, lpre, lpos, conPred, adjacencies, skipModalToggle) {
-
-    if (typeof directed === "undefined")
-        directed = $('#networkTypeSetting').is(':checked');
-    if (typeof adjacencies === "undefined")
-        adjacencies = $('#adjacencySetting').val();
-    if (typeof conPred === "undefined")
-        conPred = $('#networkConnectionSetting').val();
-    if (typeof lpre === "undefined")
-        lpre = $('#locPreSetting').val();
-    if (typeof lpos === "undefined")
-        lpos = $('#locPostSetting').val();
-    if (typeof skipModalToggle === "undefined")
-        skipModalToggle = false;
-
-    var pddl = '\n;; make sure these are constants or objects:\n;;';
-    var pddl2 = '';
-
-    var chains = adjacencies.split('\n');
-    var objs = {}
-
-    for (var i = 0; i < chains.length; i++) {
-        nodes = chains[i].split(' ');
-        for (var j = 0; j < nodes.length; j++) {
-            var obj = lpre + nodes[j] + lpos;
-
-            // Only show the objects once
-            if (!(obj in objs)) {
-                objs[obj] = true;
-                pddl += ' ' + obj;
-            }
-
-            if (j < nodes.length - 1) {
-                var obj2 = lpre + nodes[j+1] + lpos;
-                pddl2 += '\n(' + conPred + ' ' + obj + ' ' + obj2 + ')';
-                if (!directed)
-                    pddl2 += '\n(' + conPred + ' ' + obj2 + ' ' + obj + ')';
-            }
-        }
-    }
-
-    pddl += pddl2;
-
-    window.get_current_editor().insert(pddl);
-    if (!skipModalToggle) {
-        window.pddlInsertSettings.network.adj = $('#adjacencySetting').val();
-        window.pddlInsertSettings.network.conn = $('#networkConnectionSetting').val();
-        window.pddlInsertSettings.network.lpre = $('#locPreSetting').val();
-        window.pddlInsertSettings.network.lpos = $('#locPostSetting').val();
-        window.pddlInsertSettings.network.directed = $('#networkTypeSetting').is(':checked');
-        $('#pddlInsertModal').modal('toggle');
-    }
-
-}
-
-/********************************************************************/
-
-function pddlInsertGrid() {
-    $('#pddlInsertModalLabel').text('Insert Grid of Locations');
-
-    var html = '';
-
-    html += '<form class="form-horizontal">';
-
-    html += '<div class="form-group">';
-    html += '  <div class="col-sm-offset-2 col-sm-10">';
-    html += '    <div class="checkbox">';
-    html += '      <label><input id="networkTypeSetting" type="checkbox"> Directed</label>';
-    html += '    </div>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="gridTypeSplitSetting" class="col-sm-2 control-label">Grid Type</label>';
-    html += '  <div class="input-group col-sm-5">';
-    html += '    <label><input type="radio" name="inlineRadioOptions" id="gridTypeMonolithicSetting" value="monolithicGrid" checked> Monolithic Location Objects</label>';
-    html += '    <label><input type="radio" name="inlineRadioOptions" id="gridTypeSplitSetting" value="splitGrid"> Decomposed Location Objects</label>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="xSizeSetting" class="col-sm-2 control-label">Grid Size</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="xSizeSetting" value="3">';
-    html += '    <div class="input-group-addon">x</div>';
-    html += '    <input type="text" class="form-control" id="ySizeSetting" value="4">';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="locPreSetting" class="col-sm-2 control-label">Location format</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="locPreSetting" value="loc">';
-    html += '    <div class="input-group-addon">#</div>';
-    html += '    <input type="text" class="form-control" id="locPostSetting" value="">';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="gridConnectionSetting" class="col-sm-2 control-label">Connection Predicate</label>';
-    html += '  <div class="input-group col-sm-3">';
-    html += '    <div class="input-group-addon">(</div>';
-    html += '    <input type="text" class="form-control" id="gridConnectionSetting" value="connected">';
-    html += '    <div class="input-group-addon"> l1 l2)</div>';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertGrid(); return false;" class="btn btn-primary btn-lg">Insert</button>';
-
-    html += '</form>';
-
-    $('#pddlInsertModalContent').html(html);
-
-    $('#xSizeSetting').val(window.pddlInsertSettings.grid.xval);
-    $('#ySizeSetting').val(window.pddlInsertSettings.grid.yval);
-    $('#locPreSetting').val(window.pddlInsertSettings.grid.lpre);
-    $('#locPostSetting').val(window.pddlInsertSettings.grid.lpos);
-    $('#gridConnectionSetting').val(window.pddlInsertSettings.grid.conn);
-    $('#gridTypeMonolithicSetting').prop('checked', window.pddlInsertSettings.grid.mono);
-    $('#networkTypeSetting').prop('checked', window.pddlInsertSettings.network.directed);
-
-    $('#pddlInsertModal').modal('toggle');
-
-}
-
-function doPddlInsertGrid(directed, xval, yval, lpre, lpos, monolithicGridType, conPred, skipModalToggle) {
-
-    if (typeof directed === "undefined")
-        directed = $('#networkTypeSetting').is(':checked');
-    if (typeof xval === "undefined")
-        xval = parseInt($('#xSizeSetting').val());
-    if (typeof yval === "undefined")
-        yval = parseInt($('#ySizeSetting').val());
-    if (typeof lpre === "undefined")
-        lpre = $('#locPreSetting').val();
-    if (typeof lpos === "undefined")
-        lpos = $('#locPostSetting').val();
-    if (typeof monolithicGridType === "undefined")
-        monolithicGridType = $('#gridTypeMonolithicSetting').is(':checked');
-    if (typeof conPred === "undefined")
-        conPred = $('#gridConnectionSetting').val();
-    if (typeof skipModalToggle === "undefined")
-        skipModalToggle = false;
-
-    var pddl = '\n';
-
-    // Create the comment for the needed objects
-    if (monolithicGridType) {
-        pddl += ';; make sure these are constants or objects:\n;;';
-        for (var i = 1; i <= xval; i++) {
-            for (var j = 1; j <= yval; j++) {
-                pddl += ' ' + lpre + i + '_' + j + lpos;
-            }
-        }
-    } else {
-        // If we split the grid, then we just need one successor relation
-        doPddlInsertNumbers(1, Math.max(xval,yval), lpre, lpos, false, false, false, true);
-    }
-
-    // Create the connected relations
+    pddl += '   (:image \n';
+    pddl += '       ('+imageName+' '+imageEncoding+')\n';
+    pddl += '   )\n';
     pddl += '\n';
-    for (var i = 1; i <= xval; i++) {
-        for (var j = 1; j <= yval; j++) {
-            var l1, l2, l3, l4;
-            // All the points are drawn to the right except for the right-most column
-            // Go right
-            if (i < xval) {
-                if (monolithicGridType) {
-                    l1 = lpre + i + '_' + j + lpos;
-                    l2 = lpre + (i+1) + '_' + j + lpos;
-                    pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
-                } else {
-                    l1 = lpre + i + lpos;
-                    l2 = lpre + j + lpos;
-                    l3 = lpre + (i+1) + lpos;
-                    l4 = lpre + j + lpos;
-                    pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
-                }
-            }
-            // All the points are drawn to the up except for the front-most row
-            // Go up
-            if (j < yval) {
-                if (monolithicGridType) {
-                    l1 = lpre + i + '_' + j + lpos;
-                    l2 = lpre + i + '_' + (j+1) + lpos;
-                    pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
-                } else {
-                    l1 = lpre + i + lpos;
-                    l2 = lpre + j + lpos;
-                    l3 = lpre + i + lpos;
-                    l4 = lpre + (j+1) + lpos;
-                    pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
-                }
-            }
-
-            // When it is a directed graph, reverse and rebuild a line between 2 points
-            if (directed) {
-                // Go left
-                if (i > 1) {
-                    if (monolithicGridType) {
-                        l1 = lpre + i + '_' + j + lpos;
-                        l2 = lpre + (i-1) + '_' + j + lpos;
-                        pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
-                    } else {
-                        l1 = lpre + i + lpos;
-                        l2 = lpre + j + lpos;
-                        l3 = lpre + (i-1) + lpos;
-                        l4 = lpre + j + lpos;
-                        pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
-                    }
-                }
-
-                // Go down
-                if (j > 1) {
-                    if (monolithicGridType) {
-                        l1 = lpre + i + '_' + j + lpos;
-                        l2 = lpre + i + '_' + (j-1) + lpos;
-                        pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
-                    } else {
-                        l1 = lpre + i + lpos;
-                        l2 = lpre + j + lpos;
-                        l3 = lpre + i + lpos;
-                        l4 = lpre + (j-1) + lpos;
-                        pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
-                    }
-                }
-            }
-
-        }
-    }
 
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
-        window.pddlInsertSettings.grid.xval = $('#xSizeSetting').val();
-        window.pddlInsertSettings.grid.yval = $('#ySizeSetting').val();
-        window.pddlInsertSettings.grid.lpre = $('#locPreSetting').val();
-        window.pddlInsertSettings.grid.lpos = $('#locPostSetting').val();
-        window.pddlInsertSettings.grid.conn = $('#gridConnectionSetting').val();
-        window.pddlInsertSettings.grid.mono = $('#gridTypeMonolithicSetting').is(':checked');
-        window.pddlInsertSettings.network.directed = $('#networkTypeSetting').is(':checked');
-
         $('#pddlInsertModal').modal('toggle');
     }
 
+
 }
+// /********************************************************************/
 
+// function pddlInsertCustom() {
+//     $('#pddlInsertModalLabel').text('Insert Customly Generated PDDL');
 
+//     var html = '';
 
+//     html += '<form class="form-horizontal">';
+
+//     html += '<div class="form-group">';
+//     html += '  <div class="col-sm-offset-2 col-sm-4"><pre>var pddl = \'\';</pre></div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="jsSetting" class="col-sm-2 control-label">Raw JavaScript</label>';
+//     html += '  <div class="input-group col-sm-8">';
+//     html += '    <textarea id="jsSetting" class="form-control" rows="13" placeholder="JavaScript will be \'eval\'d, and the variable pddl inserted."></textarea>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertCustom(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+
+//     html += '</form>';
+
+//     $('#pddlInsertModalContent').html(html);
+
+//     $('#jsSetting').val(window.pddlInsertSettings.custom.js);
+
+//     $('#pddlInsertModal').modal('toggle');
+
+// }
+
+// function doPddlInsertCustom(rawjs, skipModalToggle) {
+
+//     if (typeof rawjs === "undefined")
+//         rawjs = $('#jsSetting').val();
+//     if (typeof skipModalToggle === "undefined")
+//         skipModalToggle = false;
+
+//     var pddl = '';
+//     eval(rawjs);
+
+//     window.get_current_editor().insert(pddl);
+//     if (!skipModalToggle) {
+//         window.pddlInsertSettings.custom.js = $('#jsSetting').val();
+//         $('#pddlInsertModal').modal('toggle');
+//     }
+
+// }
 
 /********************************************************************/
 
-function pddlInsertNumbers() {
-    $('#pddlInsertModalLabel').text('Insert Number System');
+// function pddlInsertNetwork() {
+//     $('#pddlInsertModalLabel').text('Insert Network');
 
-    var html = '';
+//     var html = '';
 
-    html += '<form class="form-horizontal">';
+//     html += '<form class="form-horizontal">';
 
-    html += '<div class="form-group">';
-    html += '  <label for="minNumSetting" class="col-sm-2 control-label">Minimum number</label>';
-    html += '  <div class="col-sm-2">';
-    html += '    <input type="number" class="form-control" id="minNumSetting" value="1">';
-    html += '  </div>';
-    html += '</div>';
+//     html += '<div class="form-group">';
+//     html += '  <div class="col-sm-offset-2 col-sm-10">';
+//     html += '    <div class="checkbox">';
+//     html += '      <label><input id="networkTypeSetting" type="checkbox"> Directed</label>';
+//     html += '    </div>';
+//     html += '  </div>';
+//     html += '</div>';
 
-    html += '<div class="form-group">';
-    html += '  <label for="maxNumSetting" class="col-sm-2 control-label">Maximum number</label>';
-    html += '  <div class="col-sm-2">';
-    html += '    <input type="number" class="form-control" id="maxNumSetting" value="10">';
-    html += '  </div>';
-    html += '</div>';
+//     html += '<div class="form-group">';
+//     html += '  <label for="locPreSetting" class="col-sm-2 control-label">Location format</label>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <input type="text" class="form-control" id="locPreSetting" value="loc">';
+//     html += '    <div class="input-group-addon">#</div>';
+//     html += '    <input type="text" class="form-control" id="locPostSetting" value="">';
+//     html += '  </div>';
+//     html += '</div>';
 
-    html += '<div class="form-group">';
-    html += '  <label for="numPreSetting" class="col-sm-2 control-label">Number format</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="numPreSetting" value="n">';
-    html += '    <div class="input-group-addon">#</div>';
-    html += '    <input type="text" class="form-control" id="numPostSetting" value="">';
-    html += '  </div>';
-    html += '</div>';
+//     html += '<div class="form-group">';
+//     html += '  <label for="networkConnectionSetting" class="col-sm-2 control-label">Connection Predicate</label>';
+//     html += '  <div class="input-group col-sm-3">';
+//     html += '    <div class="input-group-addon">(</div>';
+//     html += '    <input type="text" class="form-control" id="networkConnectionSetting" value="link">';
+//     html += '    <div class="input-group-addon"> l1 l2)</div>';
+//     html += '  </div>';
+//     html += '</div>';
 
-    html += '<div class="form-group">';
-    html += '  <label for="useSuccSetting" class="col-sm-2 control-label">Generate successors</label>';
-    html += '  <div class="col-sm-1"><input type="checkbox" id="useSuccSetting"></div>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <div class="input-group-addon">(</div>';
-    html += '    <input type="text" class="form-control" id="succSetting" value="succ">';
-    html += '    <div class="input-group-addon"> n1 n2)</div>';
-    html += '  </div>';
-    html += '</div>';
+//     html += '<div class="form-group">';
+//     html += '  <label for="adjacencySetting" class="col-sm-2 control-label">Adjacency List</label>';
+//     html += '  <div class="input-group col-sm-8">';
+//     html += '    <textarea id="adjacencySetting" class="form-control" rows="13" placeholder="Space separated location ids. Each line is a chain."></textarea>';
+//     html += '  </div>';
+//     html += '</div>';
 
-    html += '<div class="form-group">';
-    html += '  <label for="usePredSetting" class="col-sm-2 control-label">Generate predecessors</label>';
-    html += '  <div class="col-sm-1"><input type="checkbox" id="usePredSetting"></div>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <div class="input-group-addon">(</div>';
-    html += '    <input type="text" class="form-control" id="predSetting" value="pred">';
-    html += '    <div class="input-group-addon"> n1 n2)</div>';
-    html += '  </div>';
-    html += '</div>';
+//     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertNetwork(); return false;" class="btn btn-primary btn-lg">Insert</button>';
 
-    html += '<div class="form-group">';
-    html += '  <label for="useSumSetting" class="col-sm-2 control-label">Generate sum</label>';
-    html += '  <div class="col-sm-1"><input type="checkbox" id="useSumSetting"></div>';
-    html += '  <div class="input-group col-sm-3">';
-    html += '    <div class="input-group-addon">(</div>';
-    html += '    <input type="text" class="form-control" id="sumSetting" value="sum">';
-    html += '    <div class="input-group-addon"> n1 n2 {n1+n2})</div>';
-    html += '  </div>';
-    html += '</div>';
+//     html += '</form>';
 
-    html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertNumbers(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+//     $('#pddlInsertModalContent').html(html);
 
-    html += '</form>';
+//     $('#adjacencySetting').val(window.pddlInsertSettings.network.adj);
+//     $('#networkConnectionSetting').val(window.pddlInsertSettings.network.conn);
+//     $('#locPreSetting').val(window.pddlInsertSettings.network.lpre);
+//     $('#locPostSetting').val(window.pddlInsertSettings.network.lpos);
+//     $('#networkTypeSetting').prop('checked', window.pddlInsertSettings.network.directed);
 
-    $('#pddlInsertModalContent').html(html);
+//     $('#pddlInsertModal').modal('toggle');
 
-    $('#minNumSetting').val(window.pddlInsertSettings.numbers.min);
-    $('#maxNumSetting').val(window.pddlInsertSettings.numbers.max);
-    $('#numPreSetting').val(window.pddlInsertSettings.numbers.npre);
-    $('#numPostSetting').val(window.pddlInsertSettings.numbers.npos);
-    $('#useSuccSetting').prop('checked', window.pddlInsertSettings.numbers.doSucc);
-    $('#usePredSetting').prop('checked', window.pddlInsertSettings.numbers.doSucc);
-    $('#useSumSetting').prop('checked', window.pddlInsertSettings.numbers.doSum);
-    $('#succSetting').val(window.pddlInsertSettings.numbers.succ);
-    $('#predSetting').val(window.pddlInsertSettings.numbers.pred);
-    $('#sumSetting').val(window.pddlInsertSettings.numbers.sum);
+// }
 
-    $('#pddlInsertModal').modal('toggle');
+// function doPddlInsertNetwork(directed, lpre, lpos, conPred, adjacencies, skipModalToggle) {
 
-}
+//     if (typeof directed === "undefined")
+//         directed = $('#networkTypeSetting').is(':checked');
+//     if (typeof adjacencies === "undefined")
+//         adjacencies = $('#adjacencySetting').val();
+//     if (typeof conPred === "undefined")
+//         conPred = $('#networkConnectionSetting').val();
+//     if (typeof lpre === "undefined")
+//         lpre = $('#locPreSetting').val();
+//     if (typeof lpos === "undefined")
+//         lpos = $('#locPostSetting').val();
+//     if (typeof skipModalToggle === "undefined")
+//         skipModalToggle = false;
 
-function doPddlInsertNumbers(min, max, npre, npos, doSucc, doPred, doSum, skipModalToggle) {
+//     var pddl = '\n;; make sure these are constants or objects:\n;;';
+//     var pddl2 = '';
 
-    if (typeof min === "undefined")
-        min = parseInt($('#minNumSetting').val());
-    if (typeof max === "undefined")
-        max = parseInt($('#maxNumSetting').val());
-    if (typeof npre === "undefined")
-        npre = $('#numPreSetting').val();
-    if (typeof npos === "undefined")
-        npos = $('#numPostSetting').val();
-    if (typeof doSucc === "undefined")
-        doSucc = $('#useSuccSetting').is(':checked');
-    if (typeof doPred === "undefined")
-        doPred = $('#usePredSetting').is(':checked');
-    if (typeof doSum === "undefined")
-        doSum = $('#useSumSetting').is(':checked');
-    if (typeof skipModalToggle === "undefined")
-        skipModalToggle = false;
+//     var chains = adjacencies.split('\n');
+//     var objs = {}
 
-    var pddl = '\n';
+//     for (var i = 0; i < chains.length; i++) {
+//         nodes = chains[i].split(' ');
+//         for (var j = 0; j < nodes.length; j++) {
+//             var obj = lpre + nodes[j] + lpos;
 
-    if (min > max) {
-        window.toastr.error('Min should be less than max.');
-        return;
-    }
+//             // Only show the objects once
+//             if (!(obj in objs)) {
+//                 objs[obj] = true;
+//                 pddl += ' ' + obj;
+//             }
 
-    pddl += ';; make sure these are constants or objects:\n;;';
-    for (var i = min; i <= max; i++) {
-        pddl += ' ' + npre + i + npos;
-    }
+//             if (j < nodes.length - 1) {
+//                 var obj2 = lpre + nodes[j+1] + lpos;
+//                 pddl2 += '\n(' + conPred + ' ' + obj + ' ' + obj2 + ')';
+//                 if (!directed)
+//                     pddl2 += '\n(' + conPred + ' ' + obj2 + ' ' + obj + ')';
+//             }
+//         }
+//     }
 
-    if (doSucc) {
-        pddl += '\n';
-        for (var i = min; i < max; i++) {
-            var n1 = npre + i + npos;
-            var n2 = npre + parseInt(i+1) + npos;
-            pddl += '\n(' + $('#succSetting').val() + ' ' + n1 + ' ' + n2 + ')';
-        }
-    }
+//     pddl += pddl2;
 
-    if (doPred) {
-        pddl += '\n';
-        for (var i = min+1; i <= max; i++) {
-            var n1 = npre + i + npos;
-            var n2 = npre + parseInt(i-1) + npos;
-            pddl += '\n(' + $('#predSetting').val() + ' ' + n1 + ' ' + n2 + ')';
-        }
-    }
+//     window.get_current_editor().insert(pddl);
+//     if (!skipModalToggle) {
+//         window.pddlInsertSettings.network.adj = $('#adjacencySetting').val();
+//         window.pddlInsertSettings.network.conn = $('#networkConnectionSetting').val();
+//         window.pddlInsertSettings.network.lpre = $('#locPreSetting').val();
+//         window.pddlInsertSettings.network.lpos = $('#locPostSetting').val();
+//         window.pddlInsertSettings.network.directed = $('#networkTypeSetting').is(':checked');
+//         $('#pddlInsertModal').modal('toggle');
+//     }
 
-    if (doSum) {
-        pddl += '\n';
-        for (var i = min; i <= max; i++) {
-            for (var j = min; j <= max; j++) {
-                if ((i+j) <= max) {
-                    var n1 = npre + i + npos;
-                    var n2 = npre + j + npos;
-                    var n3 = npre + parseInt(i+j) + npos;
-                    pddl += '\n(' + $('#sumSetting').val() + ' ' + n1 + ' ' + n2 + ' ' + n3 + ')';
-                }
-            }
-        }
-    }
+// }
 
-    window.get_current_editor().insert(pddl);
-    if (!skipModalToggle) {
+// /********************************************************************/
 
-        window.pddlInsertSettings.numbers.min = $('#minNumSetting').val();
-        window.pddlInsertSettings.numbers.max = $('#maxNumSetting').val();
-        window.pddlInsertSettings.numbers.npre = $('#numPreSetting').val();
-        window.pddlInsertSettings.numbers.npos = $('#numPostSetting').val();
-        window.pddlInsertSettings.numbers.doSucc = $('#useSuccSetting').is(':checked');
-        window.pddlInsertSettings.numbers.doSucc = $('#usePredSetting').is(':checked');
-        window.pddlInsertSettings.numbers.doSum = $('#useSumSetting').is(':checked');
-        window.pddlInsertSettings.numbers.succ = $('#succSetting').val();
-        window.pddlInsertSettings.numbers.pred = $('#predSetting').val();
-        window.pddlInsertSettings.numbers.sum = $('#sumSetting').val();
+// function pddlInsertGrid() {
+//     $('#pddlInsertModalLabel').text('Insert Grid of Locations');
 
-        $('#pddlInsertModal').modal('toggle');
-    }
+//     var html = '';
 
-}
+//     html += '<form class="form-horizontal">';
+
+//     html += '<div class="form-group">';
+//     html += '  <div class="col-sm-offset-2 col-sm-10">';
+//     html += '    <div class="checkbox">';
+//     html += '      <label><input id="networkTypeSetting" type="checkbox"> Directed</label>';
+//     html += '    </div>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="gridTypeSplitSetting" class="col-sm-2 control-label">Grid Type</label>';
+//     html += '  <div class="input-group col-sm-5">';
+//     html += '    <label><input type="radio" name="inlineRadioOptions" id="gridTypeMonolithicSetting" value="monolithicGrid" checked> Monolithic Location Objects</label>';
+//     html += '    <label><input type="radio" name="inlineRadioOptions" id="gridTypeSplitSetting" value="splitGrid"> Decomposed Location Objects</label>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="xSizeSetting" class="col-sm-2 control-label">Grid Size</label>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <input type="text" class="form-control" id="xSizeSetting" value="3">';
+//     html += '    <div class="input-group-addon">x</div>';
+//     html += '    <input type="text" class="form-control" id="ySizeSetting" value="4">';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="locPreSetting" class="col-sm-2 control-label">Location format</label>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <input type="text" class="form-control" id="locPreSetting" value="loc">';
+//     html += '    <div class="input-group-addon">#</div>';
+//     html += '    <input type="text" class="form-control" id="locPostSetting" value="">';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="gridConnectionSetting" class="col-sm-2 control-label">Connection Predicate</label>';
+//     html += '  <div class="input-group col-sm-3">';
+//     html += '    <div class="input-group-addon">(</div>';
+//     html += '    <input type="text" class="form-control" id="gridConnectionSetting" value="connected">';
+//     html += '    <div class="input-group-addon"> l1 l2)</div>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertGrid(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+
+//     html += '</form>';
+
+//     $('#pddlInsertModalContent').html(html);
+
+//     $('#xSizeSetting').val(window.pddlInsertSettings.grid.xval);
+//     $('#ySizeSetting').val(window.pddlInsertSettings.grid.yval);
+//     $('#locPreSetting').val(window.pddlInsertSettings.grid.lpre);
+//     $('#locPostSetting').val(window.pddlInsertSettings.grid.lpos);
+//     $('#gridConnectionSetting').val(window.pddlInsertSettings.grid.conn);
+//     $('#gridTypeMonolithicSetting').prop('checked', window.pddlInsertSettings.grid.mono);
+//     $('#networkTypeSetting').prop('checked', window.pddlInsertSettings.network.directed);
+
+//     $('#pddlInsertModal').modal('toggle');
+
+// }
+
+// function doPddlInsertGrid(directed, xval, yval, lpre, lpos, monolithicGridType, conPred, skipModalToggle) {
+
+//     if (typeof directed === "undefined")
+//         directed = $('#networkTypeSetting').is(':checked');
+//     if (typeof xval === "undefined")
+//         xval = parseInt($('#xSizeSetting').val());
+//     if (typeof yval === "undefined")
+//         yval = parseInt($('#ySizeSetting').val());
+//     if (typeof lpre === "undefined")
+//         lpre = $('#locPreSetting').val();
+//     if (typeof lpos === "undefined")
+//         lpos = $('#locPostSetting').val();
+//     if (typeof monolithicGridType === "undefined")
+//         monolithicGridType = $('#gridTypeMonolithicSetting').is(':checked');
+//     if (typeof conPred === "undefined")
+//         conPred = $('#gridConnectionSetting').val();
+//     if (typeof skipModalToggle === "undefined")
+//         skipModalToggle = false;
+
+//     var pddl = '\n';
+
+//     // Create the comment for the needed objects
+//     if (monolithicGridType) {
+//         pddl += ';; make sure these are constants or objects:\n;;';
+//         for (var i = 1; i <= xval; i++) {
+//             for (var j = 1; j <= yval; j++) {
+//                 pddl += ' ' + lpre + i + '_' + j + lpos;
+//             }
+//         }
+//     } else {
+//         // If we split the grid, then we just need one successor relation
+//         doPddlInsertNumbers(1, Math.max(xval,yval), lpre, lpos, false, false, false, true);
+//     }
+
+//     // Create the connected relations
+//     pddl += '\n';
+//     for (var i = 1; i <= xval; i++) {
+//         for (var j = 1; j <= yval; j++) {
+//             var l1, l2, l3, l4;
+//             // All the points are drawn to the right except for the right-most column
+//             // Go right
+//             if (i < xval) {
+//                 if (monolithicGridType) {
+//                     l1 = lpre + i + '_' + j + lpos;
+//                     l2 = lpre + (i+1) + '_' + j + lpos;
+//                     pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
+//                 } else {
+//                     l1 = lpre + i + lpos;
+//                     l2 = lpre + j + lpos;
+//                     l3 = lpre + (i+1) + lpos;
+//                     l4 = lpre + j + lpos;
+//                     pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
+//                 }
+//             }
+//             // All the points are drawn to the up except for the front-most row
+//             // Go up
+//             if (j < yval) {
+//                 if (monolithicGridType) {
+//                     l1 = lpre + i + '_' + j + lpos;
+//                     l2 = lpre + i + '_' + (j+1) + lpos;
+//                     pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
+//                 } else {
+//                     l1 = lpre + i + lpos;
+//                     l2 = lpre + j + lpos;
+//                     l3 = lpre + i + lpos;
+//                     l4 = lpre + (j+1) + lpos;
+//                     pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
+//                 }
+//             }
+
+//             // When it is a directed graph, reverse and rebuild a line between 2 points
+//             if (directed) {
+//                 // Go left
+//                 if (i > 1) {
+//                     if (monolithicGridType) {
+//                         l1 = lpre + i + '_' + j + lpos;
+//                         l2 = lpre + (i-1) + '_' + j + lpos;
+//                         pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
+//                     } else {
+//                         l1 = lpre + i + lpos;
+//                         l2 = lpre + j + lpos;
+//                         l3 = lpre + (i-1) + lpos;
+//                         l4 = lpre + j + lpos;
+//                         pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
+//                     }
+//                 }
+
+//                 // Go down
+//                 if (j > 1) {
+//                     if (monolithicGridType) {
+//                         l1 = lpre + i + '_' + j + lpos;
+//                         l2 = lpre + i + '_' + (j-1) + lpos;
+//                         pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ')';
+//                     } else {
+//                         l1 = lpre + i + lpos;
+//                         l2 = lpre + j + lpos;
+//                         l3 = lpre + i + lpos;
+//                         l4 = lpre + (j-1) + lpos;
+//                         pddl += '\n(' + conPred + ' ' + l1 + ' ' + l2 + ' ' + l3 + ' ' + l4 + ')';
+//                     }
+//                 }
+//             }
+
+//         }
+//     }
+
+//     window.get_current_editor().insert(pddl);
+//     if (!skipModalToggle) {
+//         window.pddlInsertSettings.grid.xval = $('#xSizeSetting').val();
+//         window.pddlInsertSettings.grid.yval = $('#ySizeSetting').val();
+//         window.pddlInsertSettings.grid.lpre = $('#locPreSetting').val();
+//         window.pddlInsertSettings.grid.lpos = $('#locPostSetting').val();
+//         window.pddlInsertSettings.grid.conn = $('#gridConnectionSetting').val();
+//         window.pddlInsertSettings.grid.mono = $('#gridTypeMonolithicSetting').is(':checked');
+//         window.pddlInsertSettings.network.directed = $('#networkTypeSetting').is(':checked');
+
+//         $('#pddlInsertModal').modal('toggle');
+//     }
+
+// }
+
+
+
+
+// /********************************************************************/
+
+// function pddlInsertNumbers() {
+//     $('#pddlInsertModalLabel').text('Insert Number System');
+
+//     var html = '';
+
+//     html += '<form class="form-horizontal">';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="minNumSetting" class="col-sm-2 control-label">Minimum number</label>';
+//     html += '  <div class="col-sm-2">';
+//     html += '    <input type="number" class="form-control" id="minNumSetting" value="1">';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="maxNumSetting" class="col-sm-2 control-label">Maximum number</label>';
+//     html += '  <div class="col-sm-2">';
+//     html += '    <input type="number" class="form-control" id="maxNumSetting" value="10">';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="numPreSetting" class="col-sm-2 control-label">Number format</label>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <input type="text" class="form-control" id="numPreSetting" value="n">';
+//     html += '    <div class="input-group-addon">#</div>';
+//     html += '    <input type="text" class="form-control" id="numPostSetting" value="">';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="useSuccSetting" class="col-sm-2 control-label">Generate successors</label>';
+//     html += '  <div class="col-sm-1"><input type="checkbox" id="useSuccSetting"></div>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <div class="input-group-addon">(</div>';
+//     html += '    <input type="text" class="form-control" id="succSetting" value="succ">';
+//     html += '    <div class="input-group-addon"> n1 n2)</div>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="usePredSetting" class="col-sm-2 control-label">Generate predecessors</label>';
+//     html += '  <div class="col-sm-1"><input type="checkbox" id="usePredSetting"></div>';
+//     html += '  <div class="input-group col-sm-2">';
+//     html += '    <div class="input-group-addon">(</div>';
+//     html += '    <input type="text" class="form-control" id="predSetting" value="pred">';
+//     html += '    <div class="input-group-addon"> n1 n2)</div>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<div class="form-group">';
+//     html += '  <label for="useSumSetting" class="col-sm-2 control-label">Generate sum</label>';
+//     html += '  <div class="col-sm-1"><input type="checkbox" id="useSumSetting"></div>';
+//     html += '  <div class="input-group col-sm-3">';
+//     html += '    <div class="input-group-addon">(</div>';
+//     html += '    <input type="text" class="form-control" id="sumSetting" value="sum">';
+//     html += '    <div class="input-group-addon"> n1 n2 {n1+n2})</div>';
+//     html += '  </div>';
+//     html += '</div>';
+
+//     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertNumbers(); return false;" class="btn btn-primary btn-lg">Insert</button>';
+
+//     html += '</form>';
+
+//     $('#pddlInsertModalContent').html(html);
+
+//     $('#minNumSetting').val(window.pddlInsertSettings.numbers.min);
+//     $('#maxNumSetting').val(window.pddlInsertSettings.numbers.max);
+//     $('#numPreSetting').val(window.pddlInsertSettings.numbers.npre);
+//     $('#numPostSetting').val(window.pddlInsertSettings.numbers.npos);
+//     $('#useSuccSetting').prop('checked', window.pddlInsertSettings.numbers.doSucc);
+//     $('#usePredSetting').prop('checked', window.pddlInsertSettings.numbers.doSucc);
+//     $('#useSumSetting').prop('checked', window.pddlInsertSettings.numbers.doSum);
+//     $('#succSetting').val(window.pddlInsertSettings.numbers.succ);
+//     $('#predSetting').val(window.pddlInsertSettings.numbers.pred);
+//     $('#sumSetting').val(window.pddlInsertSettings.numbers.sum);
+
+//     $('#pddlInsertModal').modal('toggle');
+
+// }
+
+// function doPddlInsertNumbers(min, max, npre, npos, doSucc, doPred, doSum, skipModalToggle) {
+
+//     if (typeof min === "undefined")
+//         min = parseInt($('#minNumSetting').val());
+//     if (typeof max === "undefined")
+//         max = parseInt($('#maxNumSetting').val());
+//     if (typeof npre === "undefined")
+//         npre = $('#numPreSetting').val();
+//     if (typeof npos === "undefined")
+//         npos = $('#numPostSetting').val();
+//     if (typeof doSucc === "undefined")
+//         doSucc = $('#useSuccSetting').is(':checked');
+//     if (typeof doPred === "undefined")
+//         doPred = $('#usePredSetting').is(':checked');
+//     if (typeof doSum === "undefined")
+//         doSum = $('#useSumSetting').is(':checked');
+//     if (typeof skipModalToggle === "undefined")
+//         skipModalToggle = false;
+
+//     var pddl = '\n';
+
+//     if (min > max) {
+//         window.toastr.error('Min should be less than max.');
+//         return;
+//     }
+
+//     pddl += ';; make sure these are constants or objects:\n;;';
+//     for (var i = min; i <= max; i++) {
+//         pddl += ' ' + npre + i + npos;
+//     }
+
+//     if (doSucc) {
+//         pddl += '\n';
+//         for (var i = min; i < max; i++) {
+//             var n1 = npre + i + npos;
+//             var n2 = npre + parseInt(i+1) + npos;
+//             pddl += '\n(' + $('#succSetting').val() + ' ' + n1 + ' ' + n2 + ')';
+//         }
+//     }
+
+//     if (doPred) {
+//         pddl += '\n';
+//         for (var i = min+1; i <= max; i++) {
+//             var n1 = npre + i + npos;
+//             var n2 = npre + parseInt(i-1) + npos;
+//             pddl += '\n(' + $('#predSetting').val() + ' ' + n1 + ' ' + n2 + ')';
+//         }
+//     }
+
+//     if (doSum) {
+//         pddl += '\n';
+//         for (var i = min; i <= max; i++) {
+//             for (var j = min; j <= max; j++) {
+//                 if ((i+j) <= max) {
+//                     var n1 = npre + i + npos;
+//                     var n2 = npre + j + npos;
+//                     var n3 = npre + parseInt(i+j) + npos;
+//                     pddl += '\n(' + $('#sumSetting').val() + ' ' + n1 + ' ' + n2 + ' ' + n3 + ')';
+//                 }
+//             }
+//         }
+//     }
+
+//     window.get_current_editor().insert(pddl);
+//     if (!skipModalToggle) {
+
+//         window.pddlInsertSettings.numbers.min = $('#minNumSetting').val();
+//         window.pddlInsertSettings.numbers.max = $('#maxNumSetting').val();
+//         window.pddlInsertSettings.numbers.npre = $('#numPreSetting').val();
+//         window.pddlInsertSettings.numbers.npos = $('#numPostSetting').val();
+//         window.pddlInsertSettings.numbers.doSucc = $('#useSuccSetting').is(':checked');
+//         window.pddlInsertSettings.numbers.doSucc = $('#usePredSetting').is(':checked');
+//         window.pddlInsertSettings.numbers.doSum = $('#useSumSetting').is(':checked');
+//         window.pddlInsertSettings.numbers.succ = $('#succSetting').val();
+//         window.pddlInsertSettings.numbers.pred = $('#predSetting').val();
+//         window.pddlInsertSettings.numbers.sum = $('#sumSetting').val();
+
+//         $('#pddlInsertModal').modal('toggle');
+//     }
+
+// }
 
 /********************************************************************/
 
@@ -657,7 +835,7 @@ define(function () {
 
     return {
 
-        name: "Misc PDDL Generators",
+        name: "PDDL Generators",
         author: "Christian Muise and Nir Lipovetzky",
         email: "christian.muise@gmail.com,nirlipo@gmail.com",
         description: "Adds a number of utilities to the editor for generating PDDL.",
@@ -671,8 +849,18 @@ define(function () {
 
                 window.add_menu_button('&nbsp;Predicate',
                                        'pddlInsertPredicateMenu',
-                                       'glyphicon-sort-by-order',
+                                       'glyphicon-align-left',
                                        'pddlInsertPredicate()',
+                                       'pddlInsertMenu');
+                window.add_menu_button('&nbsp;Visual',
+                                       'pddlInsertPredicateMenu',
+                                       'glyphicon-eye-open',
+                                       'pddlInsertVisual()',
+                                       'pddlInsertMenu');
+                window.add_menu_button('&nbsp;Image',
+                                       'pddlInsertPredicateMenu',
+                                       'glyphicon-picture',
+                                       'pddlInsertImage()',
                                        'pddlInsertMenu');
                 
                 // window.add_menu_button('&nbsp;Numbers',
