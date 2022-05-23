@@ -114,6 +114,7 @@ function doPddlInsertPredicate(predicate, custom, priority, parameters, effect, 
 
 /******************************************************************/
 // Visual
+
 function pddlInsertVisual(){
     $('#apPddlInsertModalLabel').text('Insert Visual');
     var html = '';
@@ -276,33 +277,24 @@ function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,wid
 
 /******************************************************************/
 // Image
+var image_count = 0;
+var image_name_array = [];
+var image_encoding_array = [];
 function pddlInsertImage(){
     $('#apPddlInsertModalLabel').text('Insert Image');
+
+    //reset values
+    image_count = 0;
+    image_name_array = [];
+    image_encoding_array = [];  
+
     var html = '';
 
     html += '<form class="form-horizontal">';
 
-    html += '<div class="form-group">';
-    html += '  <label for="imageName" class="col-sm-2 control-label">Image Name</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="imageName" value="">';
-    html += '  </div>';
-    html += '</div>';
+    html += '<p id = "all-images"></p>'
 
-    html += '<div class="form-group">';
-    html += '  <label for="imageEncoding" class="col-sm-2 control-label">Encoded Image</label>';
-    html += '  <p style="color:Grey;"><small>Use https://www.base64encode.org/#encodefiles to encode images in base64\n or upload file from localhost.</small></p>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="imageEncoding" value="">';
-    html += '    <input type="file" id="imageInput" accept="image/jpeg, image/png, image/jpg" onchange="imageUploaded()">';
-    html += '    <p id="b64"></p>';
-    html += '    <script> function readFile() {if (!this.files || !this.files[0]) return; const FR = new FileReader(); FR.addEventListener("load", function(evt) {document.getElementById("imageEncoding").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");;}); FR.readAsDataURL(this.files[0]);}document.getElementById("imageInput").addEventListener("change", readFile);</script>';
-    html += '  </div>';
-    html += '</div>';
-
-    //http://localhost:8080/editor.domains/animationPlugin.js
-
-
+    html += '<button style="margin-left:26px" type="button" onclick="addAnImage(); return false;" class="btn btn-primary btn-lg">Add an image</button>';
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertImage(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
@@ -312,23 +304,61 @@ function pddlInsertImage(){
     $('#apPddlInsertModal').modal('toggle');
 }
 
+function addAnImage(){
+    var image_html = $('#all-images').html();
+    image_count += 1;
+    image_html += '<h1>Image'+image_count+'</h1>'
+    image_html += '<div class="form-group">';
+    image_html += '  <label for="imageName'+image_count+'" class="col-sm-2 control-label">Image Name</label>';
+    image_html += '  <div class="input-group col-sm-2">';
+    image_html += '    <input type="text" class="form-control" id="imageName'+image_count+'" value="">';
+    image_html += '  </div>';
+    image_html += '</div>';
+    image_html += '<div class="form-group">';
+    image_html += '  <label for="imageEncoding'+image_count+'" class="col-sm-2 control-label">Encoded Image</label>';
+    image_html += '  <span style="color:Grey;"><small>Use https://www.base64encode.org/#encodefiles to encode images in base64\n or upload an image file.</small></span>';
+    image_html += '  <div class="input-group col-sm-2">';
+    image_html += '    <input type="text" class="form-control" id="imageEncoding'+image_count+'" value="">';
+    image_html += '    <input type="file" id="imageInput'+image_count+'" accept="image/jpeg, image/png, image/jpg" >';
+    image_html += '    <p id="b64"></p>';
+    image_html += '    <script> function readFile() {\n\
+                                    if (!this.files || !this.files[0]) return;\n\
+                                    const FR = new FileReader(); \n\
+                                    FR.addEventListener("load", function(evt) {\n\
+                                        document.getElementById("imageEncoding'+image_count+'").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");\n\
+                                        image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                        console.log("file change");\n\
+                                    }); \n\
+                                    FR.readAsDataURL(this.files[0]);\n\
+                                }\n\
+                                function readName(){\n\
+                                    image_name_array['+image_count+'-1] = $("#imageName'+image_count+'").val();\n\
+                                    console.log("name change");\n\
+                                }\n\
+                                function readEncoding(){\n\
+                                    image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                    console.log("encoding change");\n\
+                                }\n\
+                                document.getElementById("imageInput'+image_count+'").addEventListener("change", readFile);\n\
+                                document.getElementById("imageName'+image_count+'").addEventListener("change", readName);\n\
+                                document.getElementById("imageEncoding'+image_count+'").addEventListener("change", readEncoding);\n\
+                        </script>';
+    image_html += '  </div>';
+    image_html += '</div>';
+    console.log(image_html);
+    $('#all-images').html(image_html);
+}
 
 function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
 
-    if (typeof imageName === "undefined")
-        imageName= $('#imageName').val();
-    if (typeof imageEncoding === "undefined")
-        imageEncoding = $('#imageEncoding').val();
-    if (typeof imageInput === "undefined"){
-        imageInput = $('#imageInput').val();
-    }
-        //imageInput = $('#imageInput').val();
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
-
+    
     var pddl = '';
     pddl += '    (:image \n';
-    pddl += '        ('+imageName+' '+imageEncoding+')\n';
+    for(var i=0; i<image_count; i++){
+        pddl += '        ('+image_name_array[i]+' '+image_encoding_array[i]+')\n';
+    }
     pddl += '    )\n';
     pddl += '\n';
 
