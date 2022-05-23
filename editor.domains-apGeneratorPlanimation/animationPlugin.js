@@ -289,18 +289,13 @@ function pddlInsertImage(){
     image_encoding_array = [];  
 
     var html = '';
-
     html += '<form class="form-horizontal">';
-
     html += '<p id = "all-images"></p>'
-
     html += '<button style="margin-left:26px" type="button" onclick="addAnImage(); return false;" class="btn btn-primary btn-lg">Add an image</button>';
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertImage(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
-
     $('#apPddlInsertModalContent').html(html);
-
     $('#apPddlInsertModal').modal('toggle');
 }
 
@@ -327,17 +322,14 @@ function addAnImage(){
                                     FR.addEventListener("load", function(evt) {\n\
                                         document.getElementById("imageEncoding'+image_count+'").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");\n\
                                         image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
-                                        console.log("file change");\n\
                                     }); \n\
                                     FR.readAsDataURL(this.files[0]);\n\
                                 }\n\
                                 function readName(){\n\
                                     image_name_array['+image_count+'-1] = $("#imageName'+image_count+'").val();\n\
-                                    console.log("name change");\n\
                                 }\n\
                                 function readEncoding(){\n\
                                     image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
-                                    console.log("encoding change");\n\
                                 }\n\
                                 document.getElementById("imageInput'+image_count+'").addEventListener("change", readFile);\n\
                                 document.getElementById("imageName'+image_count+'").addEventListener("change", readName);\n\
@@ -345,8 +337,12 @@ function addAnImage(){
                         </script>';
     image_html += '  </div>';
     image_html += '</div>';
-    console.log(image_html);
+    
     $('#all-images').html(image_html);
+    for(var i=0; i<image_count-1; i++){
+        document.getElementById("imageName"+(i+1)).value = image_name_array[i];
+        document.getElementById("imageEncoding"+(i+1)).value = image_encoding_array[i];
+    }
 }
 
 function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
@@ -354,6 +350,7 @@ function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
     
+    //genetate image pddls
     var pddl = '';
     pddl += '    (:image \n';
     for(var i=0; i<image_count; i++){
@@ -361,8 +358,6 @@ function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
     }
     pddl += '    )\n';
     pddl += '\n';
-
-
 
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
