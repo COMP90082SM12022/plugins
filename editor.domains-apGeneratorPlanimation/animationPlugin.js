@@ -62,8 +62,29 @@ function changeDomainFile(){
 
     console.log(filename);
     var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
-    console.log(domText);
-    //TODO process domText, extract predicates, display predicate on
+    // console.log(domText);
+    // console.log(domText.match(/predicates[\s\S]*?action/g));
+    // console.log();
+
+    //get the whole predicate string
+    var predicateString = domText.match(/predicates[\s\S]*?action/g)[0];
+
+    //get the whole predicate names
+    var predicateNames = predicateString.match(/\((\w\W*\w*)+([ ]|\))/g);
+    var predicate_list = ""
+
+    //extract predicates
+    for(i=0; i<predicateNames.length; i++){
+        //remove the first and last character
+        predicateNames[i] = predicateNames[i].slice(1,-1);
+        //setup options
+        predicate_list += "<option value=\"" + predicateNames[i] + "\">" + predicateNames[i] + "</option>\n"; 
+    }
+    console.log(predicateNames);
+    console.log(predicate_list);
+
+    //display predicates
+    $('#predicateName').html(predicate_list);
     
 }
 /********************************************************************/
@@ -83,7 +104,9 @@ function pddlInsertPredicate() {
     html += '<div class="form-group">';
     html += '  <label for="predicateName" class="col-sm-2 control-label">Predicate Name</label>';
     html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="predicateName" value="">';
+    // html += '    <input type="text" class="form-control" id="predicateName" value="">';
+    html += '        <select id="predicateName" class="form-control file-selection">';
+    html += '        </select>';
     html += '  </div>';
     html += '</div>';
 
