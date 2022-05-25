@@ -17,106 +17,53 @@ var AP_PDDL_INSERT_MODAL = "\
 ";
 
 /********************************************************************/
-// function to load files into independent iframe
-function loadFileUnity(){
-    var planimation_iframe=document.getElementById(iframe_id.toString());
-    var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
-    console.log(domText);
-    // var probText = window.ace.edit($('#problemPlanimationSelection').find(':selected').val()).getSession().getValue();
-    // var animateText = window.ace.edit($('#animateSelection').find(':selected').val()).getSession().getValue();
-    // var planSelected=document.getElementById("planradio").checked;
-    // if (planSelected){
-    // var planText = window.ace.edit($('#planSelection').find(':selected').val()).getSession().getValue();
-    // if (planText.length<2){
-    //   planText=" "
-    // }
-    // }else{
-    //   planText=" ";
-    // }
-    // var message={"domText":domText,"probText":probText,"animateText":animateText,"planText":planText,"solverURL": window.planimationURL};
-
-    // planimation_iframe.contentWindow.postMessage(message,"*");
-    // window.toastr.success("Start Planimation!");
-}
-
 function choosePlanimationFiles(type) {
 
     window.action_type = type
     window.file_choosers[type].showChoice();
 
     var domain_option_list = "";
-    var problem_option_list = "";
-    var animate_option_list = "";
-    var plan_option_list="";
     var unknown_option_list = "";
     var hr_line = "<option disabled=\"disabled\">---------</option>\n";
     var setDom = false;
-    var setProb = false;
-    var setAnimate = false;
-    var setPlan = false;
 
     for (var i = 0; i < window.pddl_files.length; i++) {
         if ($.inArray(window.pddl_files[i], window.closed_editors) == -1) {
             if (window.pddl_files[i] == window.last_domain)
                 setDom = true;
-            if (window.pddl_files[i] == window.last_problem)
-                setProb = true;
-            if (window.pddl_files[i] == window.last_animate)
-                setAnimate = true;
-            if (window.pddl_files[i] == window.last_plan)
-                setPlan = true;
 
             var option = "<option value=\"" + window.pddl_files[i] + "\">" + $('#tab-' + window.pddl_files[i]).text() + "</option>\n";
             var file_text = window.ace.edit(window.pddl_files[i]).getSession().getValue();
             if (file_text.indexOf('(domain') !== -1)
                 domain_option_list += option;
-            else if (file_text.indexOf('(problem') !== -1)
-                problem_option_list += option;
-            else if (file_text.indexOf('(animation') !== -1)
-                animate_option_list += option;
             else
                 unknown_option_list += option;
         }
     }
 
     var domain_list = domain_option_list+hr_line+unknown_option_list+hr_line;
-    var problem_list = problem_option_list+hr_line+unknown_option_list+hr_line+domain_option_list;
-    var animate_list = animate_option_list+hr_line+unknown_option_list+hr_line+animate_option_list;
-    var plan_list = plan_option_list+hr_line+unknown_option_list+hr_line+plan_option_list;
     $('#domainPlanimationSelection').html(domain_list);
-    // $('#problemPlanimationSelection').html(problem_list);
-    // $('#animateSelection').html(animate_list);
-    // $('#planSelection').html(plan_list);
     if (setDom)
         $('#domainPlanimationSelection').val(window.last_domain);
     console.log(domain_list);
-    //update
+
+    //update domain file selection
     changeDomainFile()
-    // if (setProb)
-    //     $('#problemPlanimationSelection').val(window.last_problem);
-    // if (setAnimate)
-    //     $('#animateSelection').val(window.last_animate);
-    // if (setPlan)
-    //     $('#planSelection').val(window.last_plan);
     $('#chooseFilesPlanimationModel').modal('toggle');
 }
 
 // function to run animation of resultant output in iframe
 function runPlanimation() {
     console.log("run planimation function is called")
-    // window.planimationURL = $('#plannerPlanimationURL').val();
-    // if (window.planimationURL.slice(-1) === "/")
-    //     window.planimationURL = window.planimationURL.slice(0, window.planimationURL.length-1);
-    // $('#chooseFilesPlanimationModel').modal('toggle');
-    // showPlanimation();
-
 }
+
 function changeDomainFile(){
     var filename = $('#domainPlanimationSelection').find(':selected').html()
 
     console.log(filename);
     var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
     console.log(domText);
+    //TODO process domText, extract predicates, display predicate on
     
 }
 /********************************************************************/
@@ -216,8 +163,6 @@ function doPddlInsertPredicate(predicate, custom, priority, parameters, effect, 
     if (!skipModalToggle) {
         $('#apPddlInsertModal').modal('toggle');
     }
-        
-
 }
 
 /******************************************************************/
@@ -471,8 +416,6 @@ function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
     if (!skipModalToggle) {
         $('#apPddlInsertModal').modal('toggle');
     }
-
-
 }
 
 
@@ -754,15 +697,6 @@ define(function () {
                 },
                 selectChoice: runPlanimation
             });
-
-            //Send file to Planimation Unity window when unity load properly
-            window.addEventListener("message", function(event) { 
-             
-                if (event.origin!= "http://editor.planning.domains"){
-                    if (event.data.action==="loadfile"){loadFileUnity()}
-                }
-            }, false);
-
             
         },
 
