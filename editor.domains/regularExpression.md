@@ -1,3 +1,6 @@
+
+About Domain file:
+
 capture each predicate
 
 /\((\w\W*\w*)+ ((\?\w+)|(\?\w+ - \w+)|(\?\w+ - \([\w\W]*\)))+\)/g
@@ -28,7 +31,7 @@ working in
 ==========================================================================================
 capture fields in the predicate
 
-[?](\w)+([ ]|[)])?
+"[?](\w)+([ ]|[)])?"
 
 with positive lookahead
 
@@ -38,3 +41,22 @@ working in
 
 
 (?s1 - site ?s2 - site ?m -material)
+
+
+About Problem file 
+
+ " (\w\W*\w*)+ - (\w+)([ ]|\n) "
+ capture the parttern 
+ 
+ obects - type
+ 
+ eg. a b - atype
+ 
+ 
+ ===========================================================
+ 
+  "(\w\W*\w*)([ ]|\n)"
+  
+  capture objects
+ 
+
