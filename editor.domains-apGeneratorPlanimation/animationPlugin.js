@@ -17,13 +17,122 @@ var AP_PDDL_INSERT_MODAL = "\
 ";
 
 /********************************************************************/
+// function to load files into independent iframe
+function loadFileUnity(){
+    var planimation_iframe=document.getElementById(iframe_id.toString());
+    var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
+    console.log(domText);
+    // var probText = window.ace.edit($('#problemPlanimationSelection').find(':selected').val()).getSession().getValue();
+    // var animateText = window.ace.edit($('#animateSelection').find(':selected').val()).getSession().getValue();
+    // var planSelected=document.getElementById("planradio").checked;
+    // if (planSelected){
+    // var planText = window.ace.edit($('#planSelection').find(':selected').val()).getSession().getValue();
+    // if (planText.length<2){
+    //   planText=" "
+    // }
+    // }else{
+    //   planText=" ";
+    // }
+    // var message={"domText":domText,"probText":probText,"animateText":animateText,"planText":planText,"solverURL": window.planimationURL};
+
+    // planimation_iframe.contentWindow.postMessage(message,"*");
+    // window.toastr.success("Start Planimation!");
+}
+
+function choosePlanimationFiles(type) {
+
+    window.action_type = type
+    window.file_choosers[type].showChoice();
+
+    var domain_option_list = "";
+    var problem_option_list = "";
+    var animate_option_list = "";
+    var plan_option_list="";
+    var unknown_option_list = "";
+    var hr_line = "<option disabled=\"disabled\">---------</option>\n";
+    var setDom = false;
+    var setProb = false;
+    var setAnimate = false;
+    var setPlan = false;
+
+    for (var i = 0; i < window.pddl_files.length; i++) {
+        if ($.inArray(window.pddl_files[i], window.closed_editors) == -1) {
+            if (window.pddl_files[i] == window.last_domain)
+                setDom = true;
+            if (window.pddl_files[i] == window.last_problem)
+                setProb = true;
+            if (window.pddl_files[i] == window.last_animate)
+                setAnimate = true;
+            if (window.pddl_files[i] == window.last_plan)
+                setPlan = true;
+
+            var option = "<option value=\"" + window.pddl_files[i] + "\">" + $('#tab-' + window.pddl_files[i]).text() + "</option>\n";
+            var file_text = window.ace.edit(window.pddl_files[i]).getSession().getValue();
+            if (file_text.indexOf('(domain') !== -1)
+                domain_option_list += option;
+            else if (file_text.indexOf('(problem') !== -1)
+                problem_option_list += option;
+            else if (file_text.indexOf('(animation') !== -1)
+                animate_option_list += option;
+            else
+                unknown_option_list += option;
+        }
+    }
+
+    var domain_list = domain_option_list+hr_line+unknown_option_list+hr_line;
+    var problem_list = problem_option_list+hr_line+unknown_option_list+hr_line+domain_option_list;
+    var animate_list = animate_option_list+hr_line+unknown_option_list+hr_line+animate_option_list;
+    var plan_list = plan_option_list+hr_line+unknown_option_list+hr_line+plan_option_list;
+    $('#domainPlanimationSelection').html(domain_list);
+    // $('#problemPlanimationSelection').html(problem_list);
+    // $('#animateSelection').html(animate_list);
+    // $('#planSelection').html(plan_list);
+    if (setDom)
+        $('#domainPlanimationSelection').val(window.last_domain);
+    console.log(domain_list);
+    //update
+    changeDomainFile()
+    // if (setProb)
+    //     $('#problemPlanimationSelection').val(window.last_problem);
+    // if (setAnimate)
+    //     $('#animateSelection').val(window.last_animate);
+    // if (setPlan)
+    //     $('#planSelection').val(window.last_plan);
+    $('#chooseFilesPlanimationModel').modal('toggle');
+}
+
+// function to run animation of resultant output in iframe
+function runPlanimation() {
+    console.log("run planimation function is called")
+    // window.planimationURL = $('#plannerPlanimationURL').val();
+    // if (window.planimationURL.slice(-1) === "/")
+    //     window.planimationURL = window.planimationURL.slice(0, window.planimationURL.length-1);
+    // $('#chooseFilesPlanimationModel').modal('toggle');
+    // showPlanimation();
+
+}
+function changeDomainFile(){
+    var filename = $('#domainPlanimationSelection').find(':selected').html()
+
+    console.log(filename);
+    var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
+    console.log(domText);
+    
+}
+/********************************************************************/
 // Predicate
 function pddlInsertPredicate() {
     $('#apPddlInsertModalLabel').text('Insert Predicate');
+    
     var html = '';
-
     html += '<form class="form-horizontal">';
-
+    html += '<div class="form-group">';
+    html += '    <label for="domainPlanimationSelection" class="col-sm-2 control-label">Domain File</label>';
+    html += '    <div class="col-sm-4">';
+    html += '        <select id="domainPlanimationSelection" class="form-control file-selection" onchange="changeDomainFile()">';
+    html += '        </select>';
+    html += '    </div>';
+    html += '</div>';
     html += '<div class="form-group">';
     html += '  <label for="predicateName" class="col-sm-2 control-label">Predicate Name</label>';
     html += '  <div class="input-group col-sm-2">';
@@ -62,14 +171,13 @@ function pddlInsertPredicate() {
     html += '  <p style="color:Grey;"><small>This is a logical statement concerning object properties which holds true when the predicate holds true. For example, (equal (?x x y) (claw x y)) means that the object ?x is at the object claw.</small></p>';
     html += '</div>';
    
-
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertPredicate(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
-
 
     $('#apPddlInsertModalContent').html(html);
 
     $('#apPddlInsertModal').modal('toggle');
+    choosePlanimationFiles('planimation');
 }
 
 
@@ -635,6 +743,25 @@ define(function () {
                 $('body').append(AP_PDDL_INSERT_MODAL);
                 window.pddlInsertSetup = true;
             }
+            
+            //Set up file chooser
+            window.register_file_chooser('planimation',
+            {
+                showChoice: function() {
+
+                    window.action_type = 'planimation'
+                    // $('#plannerPlanimationURL').val(window.planimationURL);
+                },
+                selectChoice: runPlanimation
+            });
+
+            //Send file to Planimation Unity window when unity load properly
+            window.addEventListener("message", function(event) { 
+             
+                if (event.origin!= "http://editor.planning.domains"){
+                    if (event.data.action==="loadfile"){loadFileUnity()}
+                }
+            }, false);
 
             
         },
