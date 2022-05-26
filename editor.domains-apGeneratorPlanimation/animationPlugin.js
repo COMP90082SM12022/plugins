@@ -17,7 +17,7 @@ var AP_PDDL_INSERT_MODAL = "\
 ";
 
 /********************************************************************/
-function choosePlanimationFiles(type) {
+function chooseAnimationPlanimationFiles(type) {
 
     window.action_type = type
     window.file_choosers[type].showChoice();
@@ -211,7 +211,7 @@ function pddlInsertPredicate() {
     $('#apPddlInsertModalContent').html(html);
 
     $('#apPddlInsertModal').modal('toggle');
-    choosePlanimationFiles('apPlanimation');
+    chooseAnimationPlanimationFiles('apPlanimation');
 }
 
 
