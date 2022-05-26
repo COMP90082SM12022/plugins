@@ -93,17 +93,17 @@ function readPrdicate(domText){
     var reEND = /\)\s*\(\s*\:/
     var endIndex = REST.search(reEND)
     var predicates = REST.substring(0, endIndex)
-    //console.log(predicates)
+    
 
     var items = findPredicates(predicates)
-    //console.log(items)
-
+  
     var kv = [];
     var sep = /\s/;
     for (var i=0;i<items.length;i++) {
         var item = items[i].trim();
         var pos = item.search(sep);
         if (pos != -1) {
+            
             var key = item.substring(0, pos);
             var value = item.substring(pos).trim();
             value = value.replaceAll('\n', ' ');
@@ -113,22 +113,26 @@ function readPrdicate(domText){
     return  kv
 }
 
+
 var predicates = [];
 
 function changeDomainFile(){
     var filename = $('#domainPlanimationSelection').find(':selected').html()
 
-    console.log(filename);
+    
     var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
+    
+
+    predicates = readPrdicate(domText);
 
     var predicate_list = ""
 
     for(i=0; i<predicates.length; i++){
         //setup options
         predicate_list += "<option value=\"" + predicates[i][0] + "\" id = \" option"+ i +"\"> " + predicates[i][0] + "</option>\n"; 
-        
-    }
 
+
+    }
     $('#predicateName').html(predicate_list);
     
 }
@@ -137,6 +141,7 @@ function setParameter(e) {
     for (i=0 ; i< predicates.length;i++){
         if (predicates[i][0] === e.target.value){
             document.getElementById("parametersName").value = predicates[i][1];
+        
             break;
         }
     }
