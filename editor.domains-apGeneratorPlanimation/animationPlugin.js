@@ -200,8 +200,8 @@ function pddlInsertPredicate() {
     html += '<div class="form-group">';
     html += '  <label for="effectName" class="col-sm-2 control-label">Effects</label>';
     html += '  <span style="color:Grey;"><small>This is a logical statement concerning object properties which holds true when the predicate holds true. </small></span>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="effectName" value="">';
+    html += '  <div class="input-group col-sm-8">';
+    html += '     <textarea id = "effectName" class="form-control" rows="10"  cols="40" ></textarea>' ;
     html += '  </div>';
     html += '</div>';
    
