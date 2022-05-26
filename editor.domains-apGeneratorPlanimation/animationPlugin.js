@@ -1,5 +1,5 @@
 var AP_PDDL_INSERT_MODAL = "\
-<div class=\"modal fade\" id=\"apPddlInsertModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"pddlInsertModalLabel\" aria-hidden=\"true\">\
+<div class=\"modal fade\" id=\"apPddlInsertModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"apPddlInsertModalLabel\" aria-hidden=\"true\">\
   <div class=\"modal-dialog modal-lg\">\
     <div class=\"modal-content\">\
       <div class=\"modal-header\">\
@@ -42,14 +42,14 @@ function choosePlanimationFiles(type) {
     }
 
     var domain_list = domain_option_list+hr_line+unknown_option_list+hr_line;
-    $('#domainPlanimationSelection').html(domain_list);
+    $('#apDomainPlanimationSelection').html(domain_list);
     if (setDom)
-        $('#domainPlanimationSelection').val(window.last_domain);
+        $('#apDomainPlanimationSelection').val(window.last_domain);
     console.log(domain_list);
 
     //update domain file selection
     changeDomainFile()
-    $('#chooseFilesPlanimationModel').modal('toggle');
+    $('#apChooseFilesPlanimationModel').modal('toggle');
 }
 
 function findPredicates(s) {
@@ -117,10 +117,10 @@ function readPrdicate(domText){
 var predicates = [];
 
 function changeDomainFile(){
-    var filename = $('#domainPlanimationSelection').find(':selected').html()
+    var filename = $('#apDomainPlanimationSelection').find(':selected').html()
 
     
-    var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
+    var domText = window.ace.edit($('#apDomainPlanimationSelection').find(':selected').val()).getSession().getValue();
     
 
     predicates = readPrdicate(domText);
@@ -159,9 +159,9 @@ function pddlInsertPredicate() {
     var html = '';
     html += '<form class="form-horizontal">';
     html += '<div class="form-group">';
-    html += '    <label for="domainPlanimationSelection" class="col-sm-2 control-label">Domain File</label>';
+    html += '    <label for="apDomainPlanimationSelection" class="col-sm-2 control-label">Domain File</label>';
     html += '    <div class="col-sm-4">';
-    html += '        <select id="domainPlanimationSelection" class="form-control file-selection" onchange="changeDomainFile()">';
+    html += '        <select id="apDomainPlanimationSelection" class="form-control file-selection" onchange="changeDomainFile()">';
     html += '        </select>';
     html += '    </div>';
     html += '</div>';
@@ -211,7 +211,7 @@ function pddlInsertPredicate() {
     $('#apPddlInsertModalContent').html(html);
 
     $('#apPddlInsertModal').modal('toggle');
-    choosePlanimationFiles('planimation');
+    choosePlanimationFiles('apPlanimation');
 }
 
 
@@ -603,7 +603,7 @@ define(function () {
             snippet += '               )\n';
             snippet += '   )\n';
             snippet += '  \n';
-            snippet += '  ; Custom object representing the claw\n';
+            snippet += '  ; Custom object representing the custom object\n';
             snippet += '   (:visual customVisualObjName\n';
             snippet += '               :type custom\n';
             snippet += '               :objects ObjName1 ObjName2\n';
@@ -775,11 +775,11 @@ define(function () {
             }
             
             //Set up file chooser
-            window.register_file_chooser('planimation',
+            window.register_file_chooser('apPlanimation',
             {
                 showChoice: function() {
 
-                    window.action_type = 'planimation'
+                    window.action_type = 'apPlanimation'
                     // $('#plannerPlanimationURL').val(window.planimationURL);
                 },
                 selectChoice: runPlanimation
