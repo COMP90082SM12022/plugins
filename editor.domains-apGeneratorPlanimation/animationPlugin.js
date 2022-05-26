@@ -52,41 +52,100 @@ function choosePlanimationFiles(type) {
     $('#chooseFilesPlanimationModel').modal('toggle');
 }
 
+function findPredicates(s) {
+    var result = []
+    // (left ((xx)) () )
+    var left = false
+    var n = 0;
+    var begin 
+    var end
+    for (var i=0; i < s.length; i++) {
+      if (s[i] == '(') {
+        if (left) {
+          n ++;
+        } else {
+          left = true;
+          begin = i;
+        }
+      } else if (s[i] == ')') {
+        if (n > 0) {
+          n --;
+        } else {
+          end = i;
+          var item = s.substring(begin+1, end);
+          result.push(item);
+          left = false;
+        }
+      }
+    }
+    return result;
+  }
+
 // function to run animation of resultant output in iframe
 function runPlanimation() {
     console.log("run planimation function is called")
 }
+
+function readPrdicate(domText){
+    var START = ':predicates'
+    var startIndex = domText.indexOf(START) + START.length
+    var REST = domText.substring(startIndex)
+    var reEND = /\)\s*\(\s*\:/
+    var endIndex = REST.search(reEND)
+    var predicates = REST.substring(0, endIndex)
+    //console.log(predicates)
+
+    var items = findPredicates(predicates)
+    //console.log(items)
+
+    var kv = [];
+    var sep = /\s/;
+    for (var i=0;i<items.length;i++) {
+        var item = items[i].trim();
+        var pos = item.search(sep);
+        if (pos != -1) {
+            var key = item.substring(0, pos);
+            var value = item.substring(pos).trim();
+            value = value.replaceAll('\n', ' ');
+            kv.push([key, value])
+        }
+    }
+    return  kv
+}
+
+var predicates = [];
 
 function changeDomainFile(){
     var filename = $('#domainPlanimationSelection').find(':selected').html()
 
     console.log(filename);
     var domText = window.ace.edit($('#domainPlanimationSelection').find(':selected').val()).getSession().getValue();
-    // console.log(domText);
-    // console.log(domText.match(/predicates[\s\S]*?action/g));
-    // console.log();
 
-    //get the whole predicate string
-    var predicateString = domText.match(/predicates[\s\S]*?action/g)[0];
-
-    //get the whole predicate names
-    var predicateNames = predicateString.match(/\((\w\W*\w*)+([ ]|\))/g);
     var predicate_list = ""
 
-    //extract predicates
-    for(i=0; i<predicateNames.length; i++){
-        //remove the first and last character
-        predicateNames[i] = predicateNames[i].slice(1,-1);
+    for(i=0; i<predicates.length; i++){
         //setup options
-        predicate_list += "<option value=\"" + predicateNames[i] + "\">" + predicateNames[i] + "</option>\n"; 
+        predicate_list += "<option value=\"" + predicates[i][0] + "\" id = \" option"+ i +"\"> " + predicates[i][0] + "</option>\n"; 
+        
     }
-    console.log(predicateNames);
-    console.log(predicate_list);
 
-    //display predicates
     $('#predicateName').html(predicate_list);
     
 }
+
+function setParameter(e) {
+    for (i=0 ; i< predicates.length;i++){
+        if (predicates[i][0] === e.target.value){
+            document.getElementById("parametersName").value = predicates[i][1];
+            break;
+        }
+    }
+}
+    
+
+
+
+
 /********************************************************************/
 // Predicate
 function pddlInsertPredicate() {
@@ -105,7 +164,7 @@ function pddlInsertPredicate() {
     html += '  <label for="predicateName" class="col-sm-2 control-label">Predicate Name</label>';
     html += '  <div class="input-group col-sm-2">';
     // html += '    <input type="text" class="form-control" id="predicateName" value="">';
-    html += '        <select id="predicateName" class="form-control file-selection">';
+    html += '        <select id="predicateName" class="form-control file-selection" onchange="setParameter(event)" >';
     html += '        </select>';
     html += '  </div>';
     html += '</div>';
@@ -119,26 +178,26 @@ function pddlInsertPredicate() {
 
     html += '<div class="form-group">';
     html += '  <label for="priorityName" class="col-sm-2 control-label">Priority <small>(Optional)</small></label>';
+    html += '  <span style="color:Grey;"><small>Specifies a priority in which predicates are solved. </small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="priorityName" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Specifies a priority in which predicates are solved. </small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="parametersName" class="col-sm-2 control-label">Parameters</label>';
+    html += '  <span style="color:Grey;"><small>Parameters are objects to which the Predicate applies.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="parametersName" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Parameters are objects to which the Predicate applies. For example, holding(?x) means that the predicate on-table is true for the object ?x.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="effectName" class="col-sm-2 control-label">Effects</label>';
+    html += '  <span style="color:Grey;"><small>This is a logical statement concerning object properties which holds true when the predicate holds true. </small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="effectName" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>This is a logical statement concerning object properties which holds true when the predicate holds true. For example, (equal (?x x y) (claw x y)) means that the object ?x is at the object claw.</small></p>';
     html += '</div>';
    
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertPredicate(); return false;" class="btn btn-primary btn-lg">Insert</button>';
@@ -206,10 +265,10 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="typeName" class="col-sm-2 control-label">Type Name</label>';
+    html += '  <span style="color:Grey;"><small>The type of the object. Types can either be default, custom, or predefine.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="typeName" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>The type of the object. Types can either be default, custom, or predefine.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
@@ -221,66 +280,66 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="showNameVaule" class="col-sm-2 control-label">showName (boolean)</label>';
+    html += '  <span style="color:Grey;"><small>whether to display the object\'s name on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="showNameVaule" value="TRUE">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>whether to display the object\'s name on screen.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="xValue" class="col-sm-2 control-label">x</label>';
+    html += '  <span style="color:Grey;"><small>x position of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="xValue" value="0">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>x position of the object on screen.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="yValue" class="col-sm-2 control-label">y</label>';
+    html += '  <span style="color:Grey;"><small>y position of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="yValue" value="0">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>y position of the object on screen.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="colorName" class="col-sm-2 control-label">color</label>';
+    html += '  <span style="color:Grey;"><small>Colour of the object. Can be a constant (eg BLACK), an RGB value (eg #FAA2B5), or the custom value RANDOMCOLOR.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="colorName" value="RANDOMCOLOR">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Colour of the object. Can be a constant (eg BLACK), an RGB value (eg #FAA2B5), or the custom value RANDOMCOLOR which picks a random RGB value.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="widthValue" class="col-sm-2 control-label">width</label>';
+    html += '  <span style="color:Grey;"><small>Width of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="widthValue" value="80">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Width of the object on screen.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="heightValue" class="col-sm-2 control-label">height</label>';
+    html += '  <span style="color:Grey;"><small>Height of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="heightValue" value="80">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Height of the object on screen.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="labelName" class="col-sm-2 control-label">label</label>';
+    html += '  <span style="color:Grey;"><small>Optional attribute specifying a string label to be drawn on the object.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="labelName" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Optional attribute specifying a string label to be drawn on the object.</small></p>';
     html += '</div>';
 
     html += '<div class="form-group">';
     html += '  <label for="depthName" class="col-sm-2 control-label">depth</label>';
+    html += '  <span style="color:Grey;"><small>Depth of the object on screen. Higher depth objects are drawn behind lower depths.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="depthValue" value="">';
     html += '  </div>';
-    html += '  <p style="color:Grey;"><small>Depth of the object on screen. Higher depth objects are drawn behind lower depths.</small></p>';
     html += '</div>';
 
 
