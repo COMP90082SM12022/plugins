@@ -1,10 +1,10 @@
-var PDDL_INSERT_MODAL = "\
-<div class=\"modal fade\" id=\"pddlInsertModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"pddlInsertModalLabel\" aria-hidden=\"true\">\
+var AP_PDDL_INSERT_MODAL = "\
+<div class=\"modal fade\" id=\"apPddlInsertModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"apPddlInsertModalLabel\" aria-hidden=\"true\">\
   <div class=\"modal-dialog modal-lg\">\
     <div class=\"modal-content\">\
       <div class=\"modal-header\">\
         <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\
-        <h4 class=\"modal-title\" id=\"pddlInsertModalLabel\">Insert PDDL</h4>\
+        <h4 class=\"modal-title\" id=\"apPddlInsertModalLabel\">Insert animation PDDL</h4>\
       </div>\
       <div id=\"apPddlInsertModalContent\" class=\"modal-body\">\
       </div>\
@@ -17,29 +17,163 @@ var PDDL_INSERT_MODAL = "\
 ";
 
 /********************************************************************/
+function chooseAnimationPlanimationFiles(type) {
+
+    window.action_type = type
+    window.file_choosers[type].showChoice();
+
+    var domain_option_list = "";
+    var unknown_option_list = "";
+    var hr_line = "<option disabled=\"disabled\">---------</option>\n";
+    var setDom = false;
+
+    for (var i = 0; i < window.pddl_files.length; i++) {
+        if ($.inArray(window.pddl_files[i], window.closed_editors) == -1) {
+            if (window.pddl_files[i] == window.last_domain)
+                setDom = true;
+
+            var option = "<option value=\"" + window.pddl_files[i] + "\">" + $('#tab-' + window.pddl_files[i]).text() + "</option>\n";
+            var file_text = window.ace.edit(window.pddl_files[i]).getSession().getValue();
+            if (file_text.indexOf('(domain') !== -1)
+                domain_option_list += option;
+            else
+                unknown_option_list += option;
+        }
+    }
+
+    var domain_list = domain_option_list+hr_line+unknown_option_list+hr_line;
+    $('#apDomainPlanimationSelection').html(domain_list);
+    if (setDom)
+        $('#apDomainPlanimationSelection').val(window.last_domain);
+
+    //update domain file selection
+    changeDomainFile()
+    $('#apChooseFilesPlanimationModel').modal('toggle');
+}
+
+function findPredicates(s) {
+    var result = []
+    // (left ((xx)) () )
+    var left = false
+    var n = 0;
+    var begin 
+    var end
+    for (var i=0; i < s.length; i++) {
+      if (s[i] == '(') {
+        if (left) {
+          n ++;
+        } else {
+          left = true;
+          begin = i;
+        }
+      } else if (s[i] == ')') {
+        if (n > 0) {
+          n --;
+        } else {
+          end = i;
+          var item = s.substring(begin+1, end);
+          result.push(item);
+          left = false;
+        }
+      }
+    }
+    return result;
+  }
+
+// function to run animation of resultant output in iframe
+function runPlanimation() {
+    console.log("run planimation function is called")
+}
+
+function readPrdicate(domText){
+    var START = ':predicates'
+    var startIndex = domText.indexOf(START) + START.length
+    var REST = domText.substring(startIndex)
+    var reEND = /\)\s*\(\s*\:/
+    var endIndex = REST.search(reEND)
+    var predicates = REST.substring(0, endIndex)
+    var items = findPredicates(predicates)  
+    var kv = [];
+    var sep = /\s/;
+    for (var i=0;i<items.length;i++) {
+        var item = items[i].trim();
+        var pos = item.search(sep);
+        if (pos != -1) {
+            var key = item.substring(0, pos);
+            var value = item.substring(pos).trim();
+            value = value.replaceAll('\n', ' ');
+            kv.push([key, value])
+        }
+    }
+    return  kv
+}
+
+
+var predicates = [];
+
+function changeDomainFile(){
+    var domText = window.ace.edit($('#apDomainPlanimationSelection').find(':selected').val()).getSession().getValue();
+    predicates = readPrdicate(domText);
+    var predicate_list = ""
+    for(i=0; i<predicates.length; i++){
+        //setup options
+        predicate_list += "<option value=\"" + predicates[i][0] + "\" id = \" option"+ i +"\"> " + predicates[i][0] + "</option>\n"; 
+    }
+    $('#predicateName').html(predicate_list);
+}
+
+function setParameter(e) {
+    for (i=0 ; i< predicates.length;i++){
+        if (predicates[i][0] === e.target.value){
+            document.getElementById("parametersName").value = predicates[i][1];
+            break;
+        }
+    }
+}
+    
+
+
+/********************************************************************/
 // Predicate
 function pddlInsertPredicate() {
-    $('#pddlInsertModalLabel').text('Insert Predicate');
+    $('#apPddlInsertModalLabel').text('Insert Predicate');
+    
     var html = '';
-
     html += '<form class="form-horizontal">';
-
+    html += '<div class="form-group">';
+    html += '    <label for="apDomainPlanimationSelection" class="col-sm-2 control-label">Domain File</label>';
+    html += '    <div class="col-sm-4">';
+    html += '        <select id="apDomainPlanimationSelection" class="form-control file-selection" onchange="changeDomainFile()">';
+    html += '        </select>';
+    html += '    </div>';
+    html += '</div>';
     html += '<div class="form-group">';
     html += '  <label for="predicateName" class="col-sm-2 control-label">Predicate Name</label>';
     html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="predicateName" value="">';
+    // html += '    <input type="text" class="form-control" id="predicateName" value="">';
+    html += '        <select id="predicateName" class="form-control file-selection" onchange="setParameter(event)" >';
+    html += '        </select>';
     html += '  </div>';
     html += '</div>';
 
     html += '<div class="form-group">';
-    html += '  <label for="customName" class="col-sm-2 control-label">Custom Object Name</label>';
+    html += '  <label for="customName" class="col-sm-2 control-label">Custom Object Name <small>(Optional)</small></label>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="customName" value="">';
     html += '  </div>';
     html += '</div>';
 
     html += '<div class="form-group">';
+    html += '  <label for="priorityName" class="col-sm-2 control-label">Priority <small>(Optional)</small></label>';
+    html += '  <span style="color:Grey;"><small>Specifies a priority in which predicates are solved. </small></span>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="priorityName" value="">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
     html += '  <label for="parametersName" class="col-sm-2 control-label">Parameters</label>';
+    html += '  <span style="color:Grey;"><small>Parameters are objects to which the Predicate applies.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="parametersName" value="">';
     html += '  </div>';
@@ -47,28 +181,30 @@ function pddlInsertPredicate() {
 
     html += '<div class="form-group">';
     html += '  <label for="effectName" class="col-sm-2 control-label">Effects</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="effectName" value="">';
+    html += '  <span style="color:Grey;"><small>This is a logical statement concerning object properties which holds true when the predicate holds true. </small></span>';
+    html += '  <div class="input-group col-sm-8">';
+    html += '     <textarea id = "effectName" class="form-control" rows="10"  cols="40" ></textarea>' ;
     html += '  </div>';
     html += '</div>';
-
-
+   
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertPredicate(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
-
     $('#apPddlInsertModalContent').html(html);
 
-    $('#pddlInsertModal').modal('toggle');
+    $('#apPddlInsertModal').modal('toggle');
+    chooseAnimationPlanimationFiles('apPlanimation');
 }
 
 
-function doPddlInsertPredicate(predicate, custom, parameters, effect, skipModalToggle) {
+function doPddlInsertPredicate(predicate, custom, priority, parameters, effect, skipModalToggle) {
 
     if (typeof predicate === "undefined")
         predicate = $('#predicateName').val();
     if (typeof custom === "undefined")
         custom = $('#customName').val();
+    if (typeof priority === "undefined")
+        priority = $('#priorityName').val();
     if (typeof effect === "undefined")
         effect = $('#effectName').val();
     if (typeof parameters === "undefined")
@@ -79,8 +215,14 @@ function doPddlInsertPredicate(predicate, custom, parameters, effect, skipModalT
 
     var pddl = '';
     pddl += '    (:predicate ' + predicate + '\n'
-    pddl += '        :custom '+ custom + '\n'
     pddl += '        :parameters ('+parameters+')\n'
+
+    if (custom != ""){
+        pddl += '        :custom ('+custom+')\n'
+    }
+    if (priority!=""){
+        pddl += '        :priority ('+priority+')\n'
+    }
     pddl += '        :effect ( \n'
     pddl += '            ('+effect+')\n'
     pddl += '        )\n'
@@ -88,15 +230,15 @@ function doPddlInsertPredicate(predicate, custom, parameters, effect, skipModalT
 
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
-        $('#pddlInsertModal').modal('toggle');
+        $('#apPddlInsertModal').modal('toggle');
     }
-
 }
 
 /******************************************************************/
 // Visual
+
 function pddlInsertVisual(){
-    $('#pddlInsertModalLabel').text('Insert Visual');
+    $('#apPddlInsertModalLabel').text('Insert Visual');
     var html = '';
 
     html += '<form class="form-horizontal">';
@@ -110,6 +252,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="typeName" class="col-sm-2 control-label">Type Name</label>';
+    html += '  <span style="color:Grey;"><small>The type of the object. Types can either be default, custom, or predefine.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="typeName" value="">';
     html += '  </div>';
@@ -124,6 +267,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="showNameVaule" class="col-sm-2 control-label">showName (boolean)</label>';
+    html += '  <span style="color:Grey;"><small>whether to display the object\'s name on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="showNameVaule" value="TRUE">';
     html += '  </div>';
@@ -131,6 +275,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="xValue" class="col-sm-2 control-label">x</label>';
+    html += '  <span style="color:Grey;"><small>x position of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="xValue" value="0">';
     html += '  </div>';
@@ -138,6 +283,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="yValue" class="col-sm-2 control-label">y</label>';
+    html += '  <span style="color:Grey;"><small>y position of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="yValue" value="0">';
     html += '  </div>';
@@ -145,6 +291,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="colorName" class="col-sm-2 control-label">color</label>';
+    html += '  <span style="color:Grey;"><small>Colour of the object. Can be a constant (eg BLACK), an RGB value (eg #FAA2B5), or the custom value RANDOMCOLOR.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="text" class="form-control" id="colorName" value="RANDOMCOLOR">';
     html += '  </div>';
@@ -152,6 +299,7 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="widthValue" class="col-sm-2 control-label">width</label>';
+    html += '  <span style="color:Grey;"><small>Width of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="widthValue" value="80">';
     html += '  </div>';
@@ -159,23 +307,37 @@ function pddlInsertVisual(){
 
     html += '<div class="form-group">';
     html += '  <label for="heightValue" class="col-sm-2 control-label">height</label>';
+    html += '  <span style="color:Grey;"><small>Height of the object on screen.</small></span>';
     html += '  <div class="input-group col-sm-2">';
     html += '    <input type="number" class="form-control" id="heightValue" value="80">';
     html += '  </div>';
     html += '</div>';
 
+    html += '<div class="form-group">';
+    html += '  <label for="labelName" class="col-sm-2 control-label">label</label>';
+    html += '  <span style="color:Grey;"><small>Optional attribute specifying a string label to be drawn on the object.</small></span>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="text" class="form-control" id="labelName" value="">';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="form-group">';
+    html += '  <label for="depthName" class="col-sm-2 control-label">depth</label>';
+    html += '  <span style="color:Grey;"><small>Depth of the object on screen. Higher depth objects are drawn behind lower depths.</small></span>';
+    html += '  <div class="input-group col-sm-2">';
+    html += '    <input type="number" class="form-control" id="depthValue" value="">';
+    html += '  </div>';
+    html += '</div>';
 
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertVisual(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
-
     $('#apPddlInsertModalContent').html(html);
-
-    $('#pddlInsertModal').modal('toggle');
+    $('#apPddlInsertModal').modal('toggle');
 }
 
 
-function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,width,height,skipModalToggle){
+function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,width,height,label,depth,skipModalToggle){
     if (typeof visualObject === "undefined")
         visualObject= $('#VisualObjectName').val();
     if (typeof type === "undefined")
@@ -194,14 +356,19 @@ function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,wid
         width = $('#widthValue').val();
     if (typeof height === "undefined")
         height = $('#heightValue').val();
+    if (typeof label === "undefined")
+        label = $('#labelName').val();
+    if (typeof depth === "undefined")
+        depth = $('#depthValue').val();
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
-
- 
 
     var pddl = '';
     pddl += '    (:visual '+visualObject+'\n';
     pddl += '        :type '+type+'\n';
+    if(type ==="custom" || type ==="predefine"){
+        pddl += '        :objects '+visualObject+'\n';
+    }
     pddl += '        :properties(\n';
     pddl += '            (prefabImage '+prefabImage+')\n';
     pddl += '            (showName '+showName+')\n';
@@ -210,71 +377,123 @@ function doPddlInsertVisual(visualObject,type,prefabImage,showName,x,y,color,wid
     pddl += '            (color '+color+')\n';
     pddl += '            (width '+width+')\n';
     pddl += '            (height '+height+')\n';
+    if(label != ""){
+        pddl += '            (label '+label+')\n';
+    }
+    if(depth != ""){
+        pddl += '            (depth '+depth+')\n';
+    }
     pddl += '        )\n';
     pddl += '    )\n';
     pddl += '\n';
 
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
-        $('#pddlInsertModal').modal('toggle');
+        $('#apPddlInsertModal').modal('toggle');
     }
 }
 
 
 /******************************************************************/
 // Image
+var image_count = 0;
+var image_name_array = [];
+var image_encoding_array = [];
 function pddlInsertImage(){
-    $('#pddlInsertModalLabel').text('Insert Image');
+    $('#apPddlInsertModalLabel').text('Insert Image');
+
+    //reset values
+    image_count = 0;
+    image_name_array = [];
+    image_encoding_array = [];  
+
     var html = '';
-
     html += '<form class="form-horizontal">';
-
-    html += '<div class="form-group">';
-    html += '  <label for="imageName" class="col-sm-2 control-label">Image Name</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="imageName" value="">';
-    html += '  </div>';
-    html += '</div>';
-
-    html += '<div class="form-group">';
-    html += '  <label for="imageEncoding" class="col-sm-2 control-label">Encoded Image</label>';
-    html += '  <div class="input-group col-sm-2">';
-    html += '    <input type="text" class="form-control" id="imageEncoding" value="">';
-    html += '  </div>';
-    html += '</div>';
-
-
-
+    html += '<p id = "all-images"></p>'
+    html += '<button style="margin-left:26px" type="button" onclick="addAnImage(); return false;" class="btn btn-primary btn-lg">Add an image</button>';
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertImage(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
-
     $('#apPddlInsertModalContent').html(html);
-
-    $('#pddlInsertModal').modal('toggle');
+    $('#apPddlInsertModal').modal('toggle');
 }
 
-function doPddlInsertImage(imageName, imageEncoding, skipModalToggle){
+function addAnImage(){
+    var image_html = $('#all-images').html();
+    image_count += 1;
+    image_html += '<h1>Image'+image_count+'</h1>'
+    image_html += '<div class="form-group">';
+    image_html += '  <label for="imageName'+image_count+'" class="col-sm-2 control-label">Image Name</label>';
+    image_html += '  <div class="input-group col-sm-2">';
+    image_html += '    <input type="text" class="form-control" id="imageName'+image_count+'" value="">';
+    image_html += '  </div>';
+    image_html += '</div>';
+    image_html += '<div class="form-group">';
+    image_html += '  <label for="imageEncoding'+image_count+'" class="col-sm-2 control-label">Encoded Image</label>';
+    image_html += '  <span style="color:Grey;"><small>Use https://www.base64encode.org/#encodefiles to encode images in base64\n or upload an image file.</small></span>';
+    image_html += '  <div class="input-group col-sm-2">';
+    image_html += '    <input type="text" class="form-control" id="imageEncoding'+image_count+'" value="">';
+    image_html += '    <input type="file" id="imageInput'+image_count+'" accept="image/jpeg, image/png, image/jpg" >';
+    image_html += '    <img id="img '+image_count+'" height="150">';
+    image_html += '    <script> function readFile() {\n\
+                                    if (!this.files || !this.files[0]) return;\n\
+                                    const FR = new FileReader(); \n\
+                                    FR.addEventListener("load", function(evt) {\n\
+                                        document.getElementById("img '+image_count+'").src       = evt.target.result;\n\
+                                        document.getElementById("imageEncoding'+image_count+'").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");\n\
+                                        image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                    }); \n\
+                                    FR.readAsDataURL(this.files[0]);\n\
+                                }\n\
+                                function readFileDrop(e) {\n\
+                                    var file = e.dataTransfer.files[0];\n\
+                                    const FR = new FileReader(); \n\
+                                    FR.addEventListener("load", function(evt) {\n\
+                                        document.getElementById("img '+image_count+'").src       = evt.target.result;\n\
+                                        document.getElementById("imageEncoding'+image_count+'").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");\n\
+                                        image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                    }); \n\
+                                    FR.readAsDataURL(file);\n\
+                                }\n\
+                                function readName(){\n\
+                                    image_name_array['+image_count+'-1] = $("#imageName'+image_count+'").val();\n\
+                                }\n\
+                                function readEncoding(){\n\
+                                    image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                }\n\
+                                document.getElementById("imageInput'+image_count+'").addEventListener("change", readFile);\n\
+                                document.getElementById("imageName'+image_count+'").addEventListener("change", readName);\n\
+                                document.getElementById("imageEncoding'+image_count+'").addEventListener("change", readEncoding);\n\
+                                document.getElementById("imageEncoding'+image_count+'").addEventListener("drop", readFileDrop, false);\n\
+                        </script>';
+    image_html += '  </div>';
+    image_html += '</div>';
+    
+    $('#all-images').html(image_html);
+    for(var i=0; i<image_count-1; i++){
+        document.getElementById("imageName"+(i+1)).value = image_name_array[i];
+        document.getElementById("imageEncoding"+(i+1)).value = image_encoding_array[i];
+    }
+}
 
-    if (typeof imageName === "undefined")
-        imageName= $('#imageName').val();
-    if (typeof imageEncoding === "undefined")
-        imageEncoding = $('#imageEncoding').val();
+function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
+
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
-
+    
+    //genetate image pddls
     var pddl = '';
     pddl += '    (:image \n';
-    pddl += '        ('+imageName+' '+imageEncoding+')\n';
+    for(var i=0; i<image_count; i++){
+        pddl += '        ('+image_name_array[i]+' '+image_encoding_array[i]+')\n';
+    }
     pddl += '    )\n';
     pddl += '\n';
 
     window.get_current_editor().insert(pddl);
     if (!skipModalToggle) {
-        $('#pddlInsertModal').modal('toggle');
+        $('#apPddlInsertModal').modal('toggle');
     }
-
-
 }
 
 
@@ -375,7 +594,7 @@ define(function () {
             snippet += '               )\n';
             snippet += '   )\n';
             snippet += '  \n';
-            snippet += '  ; Custom object representing the claw\n';
+            snippet += '  ; Custom object representing the custom object\n';
             snippet += '   (:visual customVisualObjName\n';
             snippet += '               :type custom\n';
             snippet += '               :objects ObjName1 ObjName2\n';
@@ -542,10 +761,20 @@ define(function () {
                                        'pddlInsertImage()',
                                        'apPddlInsertMenu');
                 
-                $('body').append(PDDL_INSERT_MODAL);
+                $('body').append(AP_PDDL_INSERT_MODAL);
                 window.pddlInsertSetup = true;
             }
+            
+            //Set up file chooser
+            window.register_file_chooser('apPlanimation',
+            {
+                showChoice: function() {
 
+                    window.action_type = 'apPlanimation'
+                    // $('#plannerPlanimationURL').val(window.planimationURL);
+                },
+                selectChoice: runPlanimation
+            });
             
         },
 
