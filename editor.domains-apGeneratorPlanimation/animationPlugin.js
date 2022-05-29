@@ -45,7 +45,6 @@ function chooseAnimationPlanimationFiles(type) {
     $('#apDomainPlanimationSelection').html(domain_list);
     if (setDom)
         $('#apDomainPlanimationSelection').val(window.last_domain);
-
     //update domain file selection
     changeDomainFile()
     $('#apChooseFilesPlanimationModel').modal('toggle');
@@ -53,7 +52,6 @@ function chooseAnimationPlanimationFiles(type) {
 
 function findPredicates(s) {
     var result = []
-    // (left ((xx)) () )
     var left = false
     var n = 0;
     var begin 
@@ -80,10 +78,8 @@ function findPredicates(s) {
     return result;
   }
 
-// function to run animation of resultant output in iframe
-function runPlanimation() {
-    console.log("run planimation function is called")
-}
+// function runPlanimation() {
+// }
 
 function readPrdicate(domText){
     var START = ':predicates'
@@ -130,7 +126,6 @@ function setParameter(e) {
         }
     }
 }
-    
 
 
 /********************************************************************/
@@ -150,7 +145,6 @@ function pddlInsertPredicate() {
     html += '<div class="form-group">';
     html += '  <label for="predicateName" class="col-sm-2 control-label">Predicate Name</label>';
     html += '  <div class="input-group col-sm-2">';
-    // html += '    <input type="text" class="form-control" id="predicateName" value="">';
     html += '        <select id="predicateName" class="form-control file-selection" onchange="setParameter(event)" >';
     html += '        </select>';
     html += '  </div>';
@@ -191,7 +185,6 @@ function pddlInsertPredicate() {
     html += '</form>';
 
     $('#apPddlInsertModalContent').html(html);
-
     $('#apPddlInsertModal').modal('toggle');
     chooseAnimationPlanimationFiles('apPlanimation');
 }
@@ -209,7 +202,6 @@ function doPddlInsertPredicate(predicate, custom, priority, parameters, effect, 
         effect = $('#effectName').val();
     if (typeof parameters === "undefined")
         parameters = $('#parametersName').val();
-
     if (typeof skipModalToggle === "undefined")
         skipModalToggle = false;
 
@@ -769,20 +761,16 @@ define(function () {
             window.register_file_chooser('apPlanimation',
             {
                 showChoice: function() {
-
                     window.action_type = 'apPlanimation'
-                    // $('#plannerPlanimationURL').val(window.planimationURL);
                 },
-                selectChoice: runPlanimation
+                // selectChoice: runPlanimation
             });
-            
         },
 
         disable: function() {
             // This is called whenever the plugin is disabled
             window.remove_menu_button('apPddlInsertMenu');
             window.pddlInsertSetup = false;
-            
         },
 
         save: function() {
@@ -794,6 +782,5 @@ define(function () {
             // Restore the plugin settings from a previous save call
             window.pddlInsertSettings = settings;
         }
-
     };
 });
