@@ -45,7 +45,6 @@ function chooseAnimationPlanimationFiles(type) {
     $('#apDomainPlanimationSelection').html(domain_list);
     if (setDom)
         $('#apDomainPlanimationSelection').val(window.last_domain);
-    console.log(domain_list);
 
     //update domain file selection
     changeDomainFile()
@@ -93,17 +92,13 @@ function readPrdicate(domText){
     var reEND = /\)\s*\(\s*\:/
     var endIndex = REST.search(reEND)
     var predicates = REST.substring(0, endIndex)
-    
-
-    var items = findPredicates(predicates)
-  
+    var items = findPredicates(predicates)  
     var kv = [];
     var sep = /\s/;
     for (var i=0;i<items.length;i++) {
         var item = items[i].trim();
         var pos = item.search(sep);
         if (pos != -1) {
-            
             var key = item.substring(0, pos);
             var value = item.substring(pos).trim();
             value = value.replaceAll('\n', ' ');
@@ -117,38 +112,25 @@ function readPrdicate(domText){
 var predicates = [];
 
 function changeDomainFile(){
-    var filename = $('#apDomainPlanimationSelection').find(':selected').html()
-
-    
     var domText = window.ace.edit($('#apDomainPlanimationSelection').find(':selected').val()).getSession().getValue();
-    
-
     predicates = readPrdicate(domText);
-
     var predicate_list = ""
-
     for(i=0; i<predicates.length; i++){
         //setup options
         predicate_list += "<option value=\"" + predicates[i][0] + "\" id = \" option"+ i +"\"> " + predicates[i][0] + "</option>\n"; 
-
-
     }
     $('#predicateName').html(predicate_list);
-    
 }
 
 function setParameter(e) {
     for (i=0 ; i< predicates.length;i++){
         if (predicates[i][0] === e.target.value){
             document.getElementById("parametersName").value = predicates[i][1];
-        
             break;
         }
     }
 }
     
-
-
 
 
 /********************************************************************/
@@ -347,13 +329,10 @@ function pddlInsertVisual(){
     html += '  </div>';
     html += '</div>';
 
-
     html += '<button style="margin-left:26px" type="button" onclick="doPddlInsertVisual(); return false;" class="btn btn-primary btn-lg">Insert</button>';
     html += '</form>';
 
-
     $('#apPddlInsertModalContent').html(html);
-
     $('#apPddlInsertModal').modal('toggle');
 }
 
@@ -466,6 +445,16 @@ function addAnImage(){
                                     }); \n\
                                     FR.readAsDataURL(this.files[0]);\n\
                                 }\n\
+                                function readFileDrop(e) {\n\
+                                    var file = e.dataTransfer.files[0];\n\
+                                    const FR = new FileReader(); \n\
+                                    FR.addEventListener("load", function(evt) {\n\
+                                        document.getElementById("img '+image_count+'").src       = evt.target.result;\n\
+                                        document.getElementById("imageEncoding'+image_count+'").value = evt.target.result.replace("data:", "").replace(/^.+,/, "");\n\
+                                        image_encoding_array['+image_count+'-1] = $("#imageEncoding'+image_count+'").val();\n\
+                                    }); \n\
+                                    FR.readAsDataURL(file);\n\
+                                }\n\
                                 function readName(){\n\
                                     image_name_array['+image_count+'-1] = $("#imageName'+image_count+'").val();\n\
                                 }\n\
@@ -475,6 +464,7 @@ function addAnImage(){
                                 document.getElementById("imageInput'+image_count+'").addEventListener("change", readFile);\n\
                                 document.getElementById("imageName'+image_count+'").addEventListener("change", readName);\n\
                                 document.getElementById("imageEncoding'+image_count+'").addEventListener("change", readEncoding);\n\
+                                document.getElementById("imageEncoding'+image_count+'").addEventListener("drop", readFileDrop, false);\n\
                         </script>';
     image_html += '  </div>';
     image_html += '</div>';
