@@ -10,8 +10,12 @@ This folder contains the plugin for http://editor.planning.domains.
 1. Go to http://editor.planning.domains
 2. Click plugin on the top menu and install Animation PDDL Generator plugin.
 3. Wait the Animation PDDL Generator plugin is fully loaded.
-4. Then write animation profile with sinippet or apInsert.
-5. Then install Planimation plugin, upload domain, problem, animation profile to animation planning question.
+4. We provide snippets for autocompletion of animation PDDL syntax,
+5. and GUI for generating the 3 most common syntax (predicate, visual, image). The GUI can extract the infomation from the existing domian files to help writing animation profile, and converting uploaded images to be encoded with base64 style.
+6. Then install Planimation plugin, upload domain, problem, animation profile to animation planning question.
+
+## Futher Improvement 
+1. Snippet can be implemented in the GUI.
 
 ## Thanks
 
