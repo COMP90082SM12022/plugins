@@ -13,6 +13,10 @@ This folder contains the plugin for http://editor.planning.domains.
 4. Then write animation profile with sinippet or apInsert.
 5. Then install Planimation plugin, upload domain, problem, animation profile to animation planning question.
 
+## Thanks
+
+The animation PDDL generator is developed by Longlin Wang, Tianyi Mo, Rubo Cai, Ruijie Pan, Haotian He under Nir Lipovetzky's guidance.
+
 Any feedback, bug reports, comments, questions, or concerns can be sent to [Nir Lipovetzky], or the [issues tracker](https://github.com/planimation/plugins/issues).
 
 [Nir Lipovetzky]:<mailto:nir.lipovetzky@unimelb.edu.au>
