@@ -78,9 +78,6 @@ function findPredicates(s) {
     return result;
   }
 
-// function runPlanimation() {
-// }
-
 function readPrdicate(domText){
     var START = ':predicates'
     var startIndex = domText.indexOf(START) + START.length
@@ -492,8 +489,8 @@ function doPddlInsertImage(imageName, imageEncoding,imageInput,skipModalToggle){
 define(function () {
 
     //Do setup work here
-    window.pddlInsertSetup = false;
-    window.pddlInsertSettings = {
+    window.apPddlInsertSetup = false;
+    window.apPddlInsertSettings = {
         predicate: {
             min: 1,
             max: 10,
@@ -525,7 +522,7 @@ define(function () {
 
     return {
 
-        name: "Animation PDDL generator",
+        name: "Animation PDDL Generator",
         author: "Nir Lipovetzky",
         email: "nir.lipovetzky@unimelb.edu.au",
         description: "An animation PDDL generator.",
@@ -734,7 +731,7 @@ define(function () {
         
             window.add_menu('&nbsp;apInsert', 'apPddlInsertMenu', 'glyphicon-log-in');
 
-            if (!window.pddlInsertSetup) {
+            if (!window.aPpddlInsertSetup) {
 
 
                 window.add_menu_button('&nbsp;Predicate',
@@ -754,7 +751,7 @@ define(function () {
                                        'apPddlInsertMenu');
                 
                 $('body').append(AP_PDDL_INSERT_MODAL);
-                window.pddlInsertSetup = true;
+                window.aPpddlInsertSetup = true;
             }
             
             //Set up file chooser
@@ -770,17 +767,17 @@ define(function () {
         disable: function() {
             // This is called whenever the plugin is disabled
             window.remove_menu_button('apPddlInsertMenu');
-            window.pddlInsertSetup = false;
+            window.aPpddlInsertSetup = false;
         },
 
         save: function() {
             // Used to save the plugin settings for later
-            return window.pddlInsertSettings;
+            return window.apPddlInsertSettings;
         },
 
         load: function(settings) {
             // Restore the plugin settings from a previous save call
-            window.pddlInsertSettings = settings;
+            window.apPddlInsertSettings = settings;
         }
     };
 });
