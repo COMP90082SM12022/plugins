@@ -6,9 +6,10 @@ This plugin complements the Planimation plugin by helping the user to generate t
 ## Functionality
  - This pulgin is similar to the pddl generator plugin existing in editor.planning.domains, can add built in generators for different visualizations that are common in planning, which can help the user to write Animation Profile to visualise the planning problem. 
  - The plugin provides following functions
+ 
 Function | Description
 ------------ | -------------
-`Snippets` | The pulgin provides snippets that are common in animation profile syntax, which supports autocompletion (For example, when user types in "predicate" on the main panel, then the code block for predicate will be autocompleted )
+`Snippets` | The pulgin provides snippets that are common in animation profile syntax, which supports autocompletion. (For example, when user types in "predicate" on the main panel, then the code block for predicate will be autocompleted )
 `apInsert GUI` | The apInsert GUI button can be found on the top menu when the plugin is installed. We provides the GUI for 3 most common aspects of the animation profile, which are predicate, visual, image. Users can enter custom values based on the parameters provided, the completed code block will be generated once click insert. This GUI can also extracts key information from the domain file to make it easier for the user to write the file. In the Image section, the GUI supports multiple images uploading from local file (or directly drag the image for uploading) and can convert them with base64 sytle. The images will be displayed for review once upload. Detailed instructions is provided in the interface.
 
 
