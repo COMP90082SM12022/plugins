@@ -1,9 +1,10 @@
 # Animation PDDL Generator plugin
 
 This folder contains the plugin for http://editor.planning.domains.
+This plugin complements the Planimation plugin by helping the user to generate the animation profile needed for planimation.
 
 ## Functionality
- - This pulgin is similar to the pddl generator plugin existing in editor.planning.domains, can add built in generators for different visualizations that are common in planning, which can help the user to write Animation Profile. 
+ - This pulgin is similar to the pddl generator plugin existing in editor.planning.domains, can add built in generators for different visualizations that are common in planning, which can help the user to write Animation Profile to visualise the planning problem. 
 
 ## How to use this plugin
 
