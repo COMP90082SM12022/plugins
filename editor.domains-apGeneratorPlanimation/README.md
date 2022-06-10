@@ -3,7 +3,7 @@
 This folder contains the plugin for http://editor.planning.domains.
 
 ## Functionality
- - Create the generator for animation profile of Planimation.
+ - This pulgin is similar to the pddl generator plugin existing in editor.planning.domains, can add built in generators for different visualizations that are common in planning. 
 
 ## How to use this plugin
 
